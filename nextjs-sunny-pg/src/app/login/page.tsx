@@ -1,33 +1,75 @@
-import Link from 'next/link'
-import { useState } from 'react'
-import { HiUser } from 'react-icons/hi' // User icon from react-icons
+"use client";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { HiUser } from "react-icons/hi"; // User icon from react-icons
 
 export default function Home() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e:any) => {
-    e.preventDefault()
-    if (email === '' || password === '') {
-      setError('Please fill in all fields')
-    } else {
-      setError('')
-      // Handle login logic here
-      console.log('Logged in:', email)
+  async function signInWithEmail(email: string, password: string) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) return error;
+      if (data) {
+        console.log("loggged in:", data);
+        return data;
+      }
+    } catch (error) {
+      return error;
     }
   }
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (email === "" || password === "") {
+      setError("Please fill in all fields");
+    } else {
+      setError("");
+      const res: any = await signInWithEmail(email, password);
+      if (res?.user) {
+        let { data: tennants, error }: { data: any; error: any } =
+          await supabase
+            .from("Tennants")
+            .select("role")
+            .eq("uid", res?.user?.id);
+        if (tennants)
+          tennants[0]?.role === "admin"
+            ? router.push("admin-dashboard")
+            : router.push("user-dashboard");
+        if (error) console.log(error);        
+      } else {
+        setError("Invalid Username or Password");
+      }
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center h-[80vh] bg-gray-100 mt-1">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96 h-[70vh]">
+    <div className="flex mt-2">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-96">
         <div className="flex justify-center mb-2">
           <HiUser className="text-purple-800 text-7xl" />
         </div>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && (
+          <div
+            className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 bg-gray-100 dark:text-red-400"
+            role="alert"
+          >
+            <span className="font-medium">{error}</span>
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <input
@@ -41,7 +83,10 @@ export default function Home() {
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -68,11 +113,14 @@ export default function Home() {
         </div>
         <div className="mt-2 text-center">
           <span className="text-sm">Don't have an account? </span>
-          <Link href="/signup" className="text-purple-800 text-sm font-semibold hover:underline">
+          <Link
+            href="/signup"
+            className="text-purple-800 text-sm font-semibold hover:underline"
+          >
             Sign up
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

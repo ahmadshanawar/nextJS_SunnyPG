@@ -1,11 +1,22 @@
-"use client"
-import { useState, ChangeEvent, FormEvent } from 'react';
+"use client";
+import { useState, ChangeEvent, FormEvent } from "react";
+import { isValid } from "@make-sense/adhaar-validator";
+import {
+  FaUser,
+  FaMobileAlt,
+  FaUniversity,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   name: string;
   mobile: string;
   addhar: string;
-  college: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -16,7 +27,6 @@ interface Errors {
   name?: string;
   mobile?: string;
   addhar?: string;
-  college?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -24,47 +34,94 @@ interface Errors {
 }
 
 const SignUpForm: React.FC = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    mobile: '',
-    addhar: '',
-    college: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    termsAccepted: false
+    name: "",
+    mobile: "",
+    addhar: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    termsAccepted: false,
   });
 
+  const [registrationErrors, setRegistrationErrors] = useState<any>();
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
   const validateForm = (): Errors => {
     const newErrors: Errors = {};
-
-    if (!formData.name) newErrors.name = 'Name is required';
+    if (!formData.name) newErrors.name = "Name is required";
     if (!formData.mobile || formData.mobile.length !== 10)
-      newErrors.mobile = 'Mobile number must be 10 digits';
+      newErrors.mobile = "Mobile number must be 10 digits";
     if (!formData.addhar || formData.addhar.length !== 12)
-      newErrors.addhar = 'Aadhaar number must be 12 digits';
-    if (!formData.college) newErrors.college = 'College/Institution is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+      newErrors.addhar = "Aadhaar number must be 12 digits";
+    if (!isValid(formData.addhar))
+      newErrors.addhar = "Aadhaar number must be valid";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
     if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = 'Passwords do not match';
-    if (!formData.termsAccepted) newErrors.termsAccepted = 'You must agree to the terms and conditions';
+      newErrors.confirmPassword = "Passwords do not match";
+    if (!formData.termsAccepted)
+      newErrors.termsAccepted = "You must agree to the terms and conditions";
 
     return newErrors;
   };
+  async function signUpUserDetails(uid: any, formData: FormData) {
+    try {
+      const { data, error } = await supabase.from("Tennants").insert([
+        {
+          uid: uid,
+          name: formData.name,
+          mobile: formData.mobile,
+          adhaar: formData.addhar,
+          email: formData.email,
+          status: "Pending",
+          mobile_verified: false,
+          passCode: formData.password,
+          termsAndCondition: formData.termsAccepted,
+          role:"user"
+        },
+      ]);
+      if (error) {
+        setRegistrationErrors(error);
+        console.log(error);
+      }    
+    } catch (error) {
+      setRegistrationErrors(error);
+      console.log(error);
+    }
+  }
 
-  const handleSubmit = (e: FormEvent) => {
+  async function signUpNewUser(email: string, password: string) {
+    try {
+      const { data: dataUser, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) {
+        setRegistrationErrors(error);
+      }
+      if (dataUser) {
+        console.log(dataUser);       
+        return dataUser;
+      }
+    } catch (error) {
+      setRegistrationErrors(error);
+    }
+  }
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     const validationErrors = validateForm();
@@ -72,90 +129,133 @@ const SignUpForm: React.FC = () => {
       setErrors(validationErrors);
       setIsSubmitting(false);
     } else {
-      // Submit form (e.g., API call)
-      console.log('Form submitted:', formData);
+      const res: any = await signUpNewUser(formData.email, formData.password);
+      if (res) {
+        signUpUserDetails(res?.user?.id, formData)
+        router.push("/login");
+      };
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Registration Form</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* Right Side (Name, Aadhaar, Mobile) */}
-        <div className="space-y-4">
-          <div>
-            <label className="text-lg text-gray-700">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-          </div>
-          <div>
-            <label className="text-lg text-gray-700">Aadhaar Number</label>
-            <input
-              type="text"
-              name="addhar"
-              value={formData.addhar}
-              onChange={handleChange}
-              maxLength={12}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.addhar && <p className="text-red-500 text-sm mt-1">{errors.addhar}</p>}
-          </div>
-          <div>
-            <label className="text-lg text-gray-700">Mobile</label>
-            <input
-              type="text"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleChange}
-              maxLength={10}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
-          </div>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10 md:mt-16">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
+        Registration Form
+      </h2>
+      {registrationErrors && <p className="text-red"></p>}
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 gap-6 md:grid-cols-2"
+      >
+        {/* Name Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Name</label>
+          <FaUser className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.name && <span className="text-red-500">{errors.name}</span>}
         </div>
 
-        {/* Left Side (Email, Password, Confirm Password) */}
-        <div className="space-y-4">
-          <div>
-            <label className="text-lg text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        {/* Aadhaar Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">
+            Aadhaar Number
+          </label>
+          <FaUniversity className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="text"
+            name="addhar"
+            value={formData.addhar}
+            onChange={handleChange}
+            maxLength={12}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.addhar && (
+            <span className="text-red-500">{errors.addhar}</span>
+          )}
+        </div>
+
+        {/* Mobile Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Mobile</label>
+          <FaMobileAlt className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="text"
+            name="mobile"
+            value={formData.mobile}
+            onChange={handleChange}
+            maxLength={10}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.mobile && (
+            <span className="text-red-500">{errors.mobile}</span>
+          )}
+        </div>
+
+        {/* Email Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <FaEnvelope className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.email && <span className="text-red-500">{errors.email}</span>}
+        </div>
+
+        {/* Password Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Password</label>
+          <FaLock className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          <div
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-10 text-gray-400 cursor-pointer"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </div>
-          <div>
-            <label className="text-lg text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          {errors.password && (
+            <span className="text-red-500">{errors.password}</span>
+          )}
+        </div>
+
+        {/* Confirm Password Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">
+            Confirm Password
+          </label>
+          <FaLock className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          <div
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-10 text-gray-400 cursor-pointer"
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
           </div>
-          <div>
-            <label className="text-lg text-gray-700">Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="p-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none w-full"
-            />
-            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-          </div>
+          {errors.confirmPassword && (
+            <span className="text-red-500">{errors.confirmPassword}</span>
+          )}
         </div>
 
         {/* Terms and Conditions */}
@@ -165,11 +265,13 @@ const SignUpForm: React.FC = () => {
             name="termsAccepted"
             checked={formData.termsAccepted}
             onChange={handleChange}
-            className="h-5 w-5 border-gray-300 focus:ring-2 focus:ring-purple-500"
+            className="h-5 w-5"
           />
-          <label className="text-sm text-gray-600">
-            I agree to the{' '}
-            <a href="#" className="text-purple-800 hover:underline">Terms and Conditions</a>
+          <label className="text-sm">
+            I agree to the{" "}
+            <a href="#" className="text-purple-600 hover:underline">
+              Terms and Conditions
+            </a>
           </label>
         </div>
 
@@ -178,9 +280,9 @@ const SignUpForm: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting || !formData.termsAccepted}
-            className="w-full p-4 bg-purple-800 text-white font-semibold rounded-md hover:bg-purple-700 disabled:opacity-50 transition"
+            className="w-full p-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
           >
-            {isSubmitting ? 'Submitting...' : 'Sign Up'}
+            {isSubmitting ? "Submitting..." : "Sign Up"}
           </button>
         </div>
       </form>

@@ -5,7 +5,6 @@ import Navbar from "./components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
   title: "Sunny PG",
   description: "Hostel and PG",
@@ -18,11 +17,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>        
-        <div>          
+      <body className={`${inter.className} antialiased`}>
+        <div>
           <Navbar />
         </div>
-        {children}
+        <div className="mx-5">{children}</div>
+        <hr className="my-5"/>
+        <footer className="footer footer-center bg-base-300 text-base-content p-4 text-center">
+          <aside>
+            <p>
+              Copyright © {new Date().getFullYear()} - All right reserved by
+              Sunny Boys Hostel & PG 
+            </p>
+          </aside>
+        </footer>
       </body>
     </html>
   );
