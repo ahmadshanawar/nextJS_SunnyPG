@@ -9,6 +9,8 @@ import {
   FaLock,
   FaEye,
   FaEyeSlash,
+  FaBriefcase,
+  FaCreditCard,
 } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -17,6 +19,8 @@ interface FormData {
   name: string;
   mobile: string;
   addhar: string;
+  occupation:string;
+  institution:string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -27,6 +31,8 @@ interface Errors {
   name?: string;
   mobile?: string;
   addhar?: string;
+  occupation?:string;
+  institution?:string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -40,6 +46,8 @@ const SignUpForm: React.FC = () => {
     mobile: "",
     addhar: "",
     email: "",
+    occupation:"",
+    institution:"",
     password: "",
     confirmPassword: "",
     termsAccepted: false,
@@ -75,7 +83,10 @@ const SignUpForm: React.FC = () => {
       newErrors.confirmPassword = "Passwords do not match";
     if (!formData.termsAccepted)
       newErrors.termsAccepted = "You must agree to the terms and conditions";
-
+    if (!formData.occupation)
+      newErrors.occupation = "Occupation is required";
+    if (!formData.institution)
+      newErrors.institution = "Institution is required";
     return newErrors;
   };
   async function signUpUserDetails(uid: any, formData: FormData) {
@@ -91,6 +102,8 @@ const SignUpForm: React.FC = () => {
           mobile_verified: false,
           passCode: formData.password,
           termsAndCondition: formData.termsAccepted,
+          occupation:formData.occupation,
+          institution:formData.institution,
           role:"user"
         },
       ]);
@@ -167,7 +180,7 @@ const SignUpForm: React.FC = () => {
           <label className="block text-sm font-medium mb-1">
             Aadhaar Number
           </label>
-          <FaUniversity className="absolute left-3 top-10 text-gray-400" />
+          <FaCreditCard className="absolute left-3 top-10 text-gray-400" />
           <input
             type="text"
             name="addhar"
@@ -178,6 +191,43 @@ const SignUpForm: React.FC = () => {
           />
           {errors.addhar && (
             <span className="text-red-500">{errors.addhar}</span>
+          )}
+        </div>
+          {/* Occupation Input */}
+          <div className="relative">
+          <label className="block text-sm font-medium mb-1">
+          Occupation
+          </label>
+          <FaBriefcase className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="text"
+            name="occupation"
+            value={formData.occupation}
+            onChange={handleChange}
+            maxLength={50}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.occupation && (
+            <span className="text-red-500">{errors.occupation}</span>
+          )}
+        </div>
+
+          {/* institution Input */}
+          <div className="relative">
+          <label className="block text-sm font-medium mb-1">
+          Institution
+          </label>
+          <FaUniversity className="absolute left-3 top-10 text-gray-400" />
+          <input
+            type="text"
+            name="institution"
+            value={formData.institution}
+            onChange={handleChange}
+            maxLength={50}
+            className="p-3 pl-10 w-full rounded-md border border-gray-300"
+          />
+          {errors.institution && (
+            <span className="text-red-500">{errors.institution}</span>
           )}
         </div>
 

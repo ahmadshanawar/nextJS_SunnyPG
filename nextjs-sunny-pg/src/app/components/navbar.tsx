@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathName = usePathname();  
-  
+  const pathName = usePathname();
+
   const navLinks = [
     { id: 1, name: "Home", href: "/" },
     { id: 2, name: "Pricing", href: "/pricing" },
@@ -59,7 +59,13 @@ const Navbar = () => {
           </div>
 
           {/* Navigation Links */}
-          <div className={`hidden sm:flex space-x-4 ${isMenuOpen ? 'flex-col absolute top-16 left-0 bg-white w-full z-10' : ''}`}>
+          <div
+            className={`hidden sm:flex space-x-4 ${
+              isMenuOpen
+                ? "flex-col absolute top-16 left-0 bg-white w-full z-10"
+                : ""
+            }`}
+          >
             {navLinks.map((link) => (
               <Link key={link.id} href={link.href}>
                 <div

@@ -33,7 +33,8 @@ export default function Home() {
     } else {
       setError("");
       const res: any = await signInWithEmail(email, password);
-      if (res?.user) {
+      if (res?.user) {        
+        localStorage.setItem("supabaseSession", JSON.stringify(res?.session));
         let { data: tennants, error }: { data: any; error: any } =
           await supabase
             .from("Tennants")

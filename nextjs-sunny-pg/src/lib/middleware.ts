@@ -8,6 +8,7 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session }
   } = await supabase.auth.getSession(); 
+
   if (!session) {
     return NextResponse.rewrite(new URL("/login", req.url));
   }
