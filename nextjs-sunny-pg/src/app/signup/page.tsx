@@ -19,8 +19,8 @@ interface FormData {
   name: string;
   mobile: string;
   addhar: string;
-  occupation:string;
-  institution:string;
+  occupation: string;
+  institution: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -31,8 +31,8 @@ interface Errors {
   name?: string;
   mobile?: string;
   addhar?: string;
-  occupation?:string;
-  institution?:string;
+  occupation?: string;
+  institution?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -46,8 +46,8 @@ const SignUpForm: React.FC = () => {
     mobile: "",
     addhar: "",
     email: "",
-    occupation:"",
-    institution:"",
+    occupation: "",
+    institution: "",
     password: "",
     confirmPassword: "",
     termsAccepted: false,
@@ -57,8 +57,7 @@ const SignUpForm: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -75,18 +74,15 @@ const SignUpForm: React.FC = () => {
       newErrors.mobile = "Mobile number must be 10 digits";
     if (!formData.addhar || formData.addhar.length !== 12)
       newErrors.addhar = "Aadhaar number must be 12 digits";
-    if (!isValid(formData.addhar))
-      newErrors.addhar = "Aadhaar number must be valid";
+    if (!isValid(formData.addhar)) newErrors.addhar = "Aadhaar number must be valid";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
     if (!formData.termsAccepted)
       newErrors.termsAccepted = "You must agree to the terms and conditions";
-    if (!formData.occupation)
-      newErrors.occupation = "Occupation is required";
-    if (!formData.institution)
-      newErrors.institution = "Institution is required";
+    if (!formData.occupation) newErrors.occupation = "Occupation is required";
+    if (!formData.institution) newErrors.institution = "Institution is required";
     return newErrors;
   };
   async function signUpUserDetails(uid: any, formData: FormData) {
@@ -102,15 +98,15 @@ const SignUpForm: React.FC = () => {
           mobile_verified: false,
           passCode: formData.password,
           termsAndCondition: formData.termsAccepted,
-          occupation:formData.occupation,
-          institution:formData.institution,
-          role:"user"
+          occupation: formData.occupation,
+          institution: formData.institution,
+          role: "user",
         },
       ]);
       if (error) {
         setRegistrationErrors(error);
         console.log(error);
-      }    
+      }
     } catch (error) {
       setRegistrationErrors(error);
       console.log(error);
@@ -127,7 +123,6 @@ const SignUpForm: React.FC = () => {
         setRegistrationErrors(error);
       }
       if (dataUser) {
-        console.log(dataUser);       
         return dataUser;
       }
     } catch (error) {
@@ -144,9 +139,9 @@ const SignUpForm: React.FC = () => {
     } else {
       const res: any = await signUpNewUser(formData.email, formData.password);
       if (res) {
-        signUpUserDetails(res?.user?.id, formData)
+        signUpUserDetails(res?.user?.id, formData);
         router.push("/login");
-      };
+      }
       setIsSubmitting(false);
     }
   };
@@ -177,9 +172,7 @@ const SignUpForm: React.FC = () => {
 
         {/* Aadhaar Input */}
         <div className="relative">
-          <label className="block text-sm font-medium mb-1">
-            Aadhaar Number
-          </label>
+          <label className="block text-sm font-medium mb-1">Aadhaar Number</label>
           <FaCreditCard className="absolute left-3 top-10 text-gray-400" />
           <input
             type="text"
@@ -189,15 +182,11 @@ const SignUpForm: React.FC = () => {
             maxLength={12}
             className="p-3 pl-10 w-full rounded-md border border-gray-300"
           />
-          {errors.addhar && (
-            <span className="text-red-500">{errors.addhar}</span>
-          )}
+          {errors.addhar && <span className="text-red-500">{errors.addhar}</span>}
         </div>
-          {/* Occupation Input */}
-          <div className="relative">
-          <label className="block text-sm font-medium mb-1">
-          Occupation
-          </label>
+        {/* Occupation Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Occupation</label>
           <FaBriefcase className="absolute left-3 top-10 text-gray-400" />
           <input
             type="text"
@@ -212,11 +201,9 @@ const SignUpForm: React.FC = () => {
           )}
         </div>
 
-          {/* institution Input */}
-          <div className="relative">
-          <label className="block text-sm font-medium mb-1">
-          Institution
-          </label>
+        {/* institution Input */}
+        <div className="relative">
+          <label className="block text-sm font-medium mb-1">Institution</label>
           <FaUniversity className="absolute left-3 top-10 text-gray-400" />
           <input
             type="text"
@@ -243,9 +230,7 @@ const SignUpForm: React.FC = () => {
             maxLength={10}
             className="p-3 pl-10 w-full rounded-md border border-gray-300"
           />
-          {errors.mobile && (
-            <span className="text-red-500">{errors.mobile}</span>
-          )}
+          {errors.mobile && <span className="text-red-500">{errors.mobile}</span>}
         </div>
 
         {/* Email Input */}
@@ -286,9 +271,7 @@ const SignUpForm: React.FC = () => {
 
         {/* Confirm Password Input */}
         <div className="relative">
-          <label className="block text-sm font-medium mb-1">
-            Confirm Password
-          </label>
+          <label className="block text-sm font-medium mb-1">Confirm Password</label>
           <FaLock className="absolute left-3 top-10 text-gray-400" />
           <input
             type={showConfirmPassword ? "text" : "password"}

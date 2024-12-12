@@ -7,6 +7,7 @@ import User from "../../../public/images/user.png";
 import { uploadPhoto } from "./helpers/helper";
 import { compressImage } from "./helpers/compressImage";
 import clsx from "clsx";
+import { isValid } from "@make-sense/adhaar-validator";
 
 type UserData = {
   name: string;
@@ -114,8 +115,8 @@ const Profile = () => {
       newErrors.mobile = "Mobile number must be 10 digits.";
     }
 
-    if (!/^\d{12}$/.test(userData.adhaar)) {
-      newErrors.adhaar = "Aadhaar number must be 12 digits.";
+    if (!/^\d{12}$/.test(userData.adhaar) || !isValid(userData.adhaar)) {
+      newErrors.adhaar = "Aadhaar number must be Valid 12 digits number.";
     }
 
     if (userData.institution.length > 100) {
@@ -165,7 +166,7 @@ const Profile = () => {
       fileInputRef.current.click();
     }
   };
-  const StatusIndicator = ({ status }: { status: string }) => {
+  const StatusIndicator = ({ status }: { status: string | null }) => {
     const statusClasses: any = {
       Pending: "bg-orange-600",
       "Awaiting Approval": "bg-yellow-300",
@@ -175,8 +176,8 @@ const Profile = () => {
     return (
       <div
         className={clsx(
-          "top-0 right-0 absolute w-10 h-10 border-2 border-white rounded-full",
-          statusClasses[status] || "bg-gray-400" // Default color if status is unknown
+          "bottom-0 right-0 absolute w-10 h-10 border-2 border-white rounded-full",
+          statusClasses[status || ""] || "bg-gray-400" // Default color if status is unknown
         )}
       />
     );
@@ -185,10 +186,9 @@ const Profile = () => {
   return (
     <div className="bg-white flex flex-col items-center justify-center p-4">
       {/* Avatar */}
-      <div className="text-center">
-        <span className="text-lg text-gray-700">
-          Admission Status:{" "}
-          <strong className="text-xl text-gray-700">{status}</strong>
+      <div className="text-center bg-purple-900 shadow-sm rounded-lg px-3 py-1 mb-4">
+        <span className="text-md text-[#fff]">
+          Status: <strong className="text-md">{status}</strong>
         </span>
       </div>
       <div className="items-center justify-center">
@@ -351,22 +351,27 @@ const Profile = () => {
           </>
         ) : (
           <ul className="space-y-2 text-gray-800">
+            <hr />
             <li className="flex justify-between items-center">
               <span className="font-semibold text-lg">Name:</span>
               <span className="text-gray-600">{userData.name}</span>
             </li>
+            <hr />
             <li className="flex justify-between items-center">
               <span className="font-semibold text-lg">Mobile:</span>
               <span className="text-gray-600">{userData.mobile}</span>
             </li>
+            <hr />
             <li className="flex justify-between items-center">
               <span className="font-semibold text-lg">Aadhaar:</span>
               <span className="text-gray-600">{userData.adhaar}</span>
             </li>
+            <hr />
             <li className="flex justify-between items-center">
               <span className="font-semibold text-lg">Email:</span>
               <span className="text-gray-600">{userData.email}</span>
             </li>
+            <hr />
           </ul>
         )}
 
@@ -379,7 +384,7 @@ const Profile = () => {
               Cancel
             </button>
           )}
-          {!isEditing && (
+          {!isEditing && status === "Pending" && (
             <button
               onClick={() => setIsEditing(!isEditing)}
               className="mt-8 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"

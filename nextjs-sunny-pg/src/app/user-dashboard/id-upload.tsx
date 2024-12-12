@@ -8,8 +8,11 @@ import User from "../../../public/images/user.png";
 import { compressImage } from "./helpers/compressImage";
 
 const IdUpload = () => {
-  const { userId } = useUserStore();
+  const { userId, status, setStatus } = useUserStore();
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [registrationMessage, setRegistrationMessage] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<any>({
+    profileUrl: null,
     adhaarFront: null,
     adhaarBack: null,
     alternateId: null,
@@ -41,8 +44,8 @@ const IdUpload = () => {
           .eq("uid", userId);
 
         if (error) throw error;
-
         const urls = {
+          profile: data[0]?.profileUrl,
           adhaarFront: data[0]?.adhaarFrontUrl,
           adhaarBack: data[0]?.adhaarBackUrl,
           alternateId: data[0]?.otherIdUrl,
@@ -51,6 +54,7 @@ const IdUpload = () => {
       } catch (error) {
         console.log("Error fetching image URLs:", error);
         return {
+          profile: null,
           adhaarFront: null,
           adhaarBack: null,
           alternateId: null,
@@ -100,6 +104,32 @@ const IdUpload = () => {
     }
   };
 
+  async function handleConfirmRegister() {
+    try {
+      const { data, error }: { data: any; error: any } = await supabase
+        .from("Tennants")
+        .update({ status: "Awaiting Approval" })
+        .eq("uid", userId);
+      if (error) {
+        setRegistrationMessage("Something went wrong Please check with office!");
+      }
+      //setting Store variable
+      setStatus("Awaiting Approval");
+      setRegistrationMessage("Registration form was sent sucessfully");
+      setIsDialogOpen(false);
+    } catch (error) {
+      setRegistrationMessage("Something went wrong Please check with office!");
+
+      console.log(error);
+    }
+  }
+  const handleRegisterUser = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
   const renderFilePreview = (imageUrl: string | null, isLoading: boolean) => {
     return (
       <div className="mt-2 p-4 bg-white relative">
@@ -138,19 +168,27 @@ const IdUpload = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-4 text-center">
-        Upload Your ID Documents
-      </h2>
-      <div className="flex flex-wrap gap-4 items-center justify-center">
+      <h4 className="text-md font-semibold mb-4 text-center">
+        {status === "Pending" ? "Upload Your" : "Your Uploaded"} ID Documents
+      </h4>
+      {status === "Pending" && (
+        <p className="text-center text-gray-500 text-sm">
+          Upload files with size less than 5MB
+        </p>
+      )}
+      <hr />
+      <div className="flex flex-wrap gap-4 items-center justify-center mb-4">
         {/* Aadhaar Front */}
         <div className="flex flex-col items-center shadow-2xl">
-          <div className="mt-2 text-center">Adhaar Card Front</div>
-          <button
-            onClick={() => document.getElementById("adhaarFrontInput")?.click()}
-            className="mt-4 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-          >
-            Choose File
-          </button>
+          <div className="mt-2 text-center p-4">Adhaar Card Front</div>
+          {status === "Pending" && (
+            <button
+              onClick={() => document.getElementById("adhaarFrontInput")?.click()}
+              className="bg-purple-800 hover:bg-purple-700 text-white px-4 py-1 rounded"
+            >
+              Choose File
+            </button>
+          )}
           <input
             id="adhaarFrontInput"
             type="file"
@@ -163,13 +201,15 @@ const IdUpload = () => {
 
         {/* Aadhaar Back */}
         <div className="flex flex-col items-center shadow-2xl">
-          <div className="mt-2 text-center">Adhaar Card Back</div>
-          <button
-            onClick={() => document.getElementById("adhaarBackInput")?.click()}
-            className="mt-4 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-          >
-            Choose File
-          </button>
+          <div className="mt-2 text-center p-4">Adhaar Card Back</div>
+          {status === "Pending" && (
+            <button
+              onClick={() => document.getElementById("adhaarBackInput")?.click()}
+              className="bg-purple-800 hover:bg-purple-700 text-white px-4 py-1 rounded"
+            >
+              Choose File
+            </button>
+          )}
           <input
             id="adhaarBackInput"
             type="file"
@@ -177,18 +217,21 @@ const IdUpload = () => {
             onChange={(e) => handleFileChange(e, "adhaarBack")}
             className="hidden"
           />
-          {renderFilePreview(imageUrls?.adhaarBack, loadingStates.adhaarBack)}
+          {renderFilePreview(imageUrls?.adhaarBack, loadingStates?.adhaarBack)}
         </div>
 
         {/* Alternate ID */}
         <div className="flex flex-col items-center shadow-2xl">
-          <div className="mt-2 text-center">College/Alternate Id</div>
-          <button
-            onClick={() => document.getElementById("alternateIdInput")?.click()}
-            className="mt-4 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-          >
-            Choose File
-          </button>
+          <div className="mt-2 text-center p-4">College/Alternate Id</div>
+
+          {status === "Pending" && (
+            <button
+              onClick={() => document.getElementById("alternateIdInput")?.click()}
+              className="bg-purple-800 hover:bg-purple-700 text-white px-4 py-1 rounded"
+            >
+              Choose File
+            </button>
+          )}
           <input
             id="alternateIdInput"
             type="file"
@@ -199,6 +242,57 @@ const IdUpload = () => {
           {renderFilePreview(imageUrls?.alternateId, loadingStates.alternateId)}
         </div>
       </div>
+      {registrationMessage && (
+        <div
+          className="p-4 my-4 text-sm text-green-800 rounded-lg bg-green-100 bg-gray-100 dark:text-green-600"
+          role="alert"
+        >
+          <span className="font-medium">{registrationMessage}</span>
+        </div>
+      )}
+      <hr />
+      <div className="mt-4 flex justify-end">
+        {status === "Pending" && (
+          <button
+            onClick={handleRegisterUser}
+            className="bg-purple-800 hover:bg-purple-700 text-white px-6 disabled:opacity-50 py-2 rounded"
+            disabled={
+              !imageUrls?.adhaarFront ||
+              !imageUrls?.adhaarBack ||
+              !imageUrls?.alternateId ||
+              !imageUrls?.profile
+            }
+          >
+            Register
+          </button>
+        )}
+      </div>
+      {isDialogOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 mx-5">
+          <div className="bg-white p-6 rounded-md w-full max-w-sm">
+            <h3 className="text-lg font-semibold mb-4">Confirm Registration</h3>
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to proceed with registration? Please ensure the
+              uploaded ID proofs are correct for a successfull registration. All the
+              information provided will be verified by us!
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                onClick={handleDialogClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                onClick={handleConfirmRegister}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

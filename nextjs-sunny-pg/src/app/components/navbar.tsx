@@ -1,18 +1,68 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
+import useUserStore from "@/lib/store/userStore";
+import { supabase } from "@/lib/supabase";
+import {
+  FaPowerOff,
+  FaHome,
+  FaMoneyBillWave,
+  FaTachometerAlt,
+} from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
+  const router = useRouter();
+  const { role, userId, setRole, setStatus, setUserId } = useUserStore();
 
-  const navLinks = [
-    { id: 1, name: "Home", href: "/" },
-    { id: 2, name: "Pricing", href: "/pricing" },
-    { id: 3, name: "About", href: "/about" },
+  let navLinks = [
+    {
+      id: 1,
+      name: "Home",
+      href: "/",
+      icon: <FaHome className="mr-1 text-gray-300" />,
+    },
+    {
+      id: 2,
+      name: "Pricing",
+      href: "/pricing",
+      icon: <FaMoneyBillWave className="mr-1 text-gray-300" />,
+    },
   ];
+
+  const dashboardLink = [
+    {
+      id: 4,
+      name: "Dashboard",
+      href: `${role === "user" ? "/user-dashboard" : "/admin-dashboard"}`,
+      icon: <FaTachometerAlt className="mr-1 text-gray-300" />,
+    },
+  ];
+
+  const logout = [
+    {
+      id: 5,
+      name: "Logout",
+      href: "/login",
+      icon: <FaPowerOff className="mr-1 text-gray-300" />,
+    },
+  ];
+
+  if (userId) {
+    navLinks = [...navLinks, ...dashboardLink, ...logout];
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+    localStorage.removeItem("supabaseSession");
+    setUserId(null);
+    setRole(null);
+    setStatus(null);
+  }
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -69,6 +119,9 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link key={link.id} href={link.href}>
                 <div
+                  onClick={
+                    userId && link.name === "Logout" ? handleLogout : () => {}
+                  }
                   className={clsx(
                     "text-gray-800 hover:text-black-500 transition duration-300 py-2 px-4 rounded-md",
                     {
@@ -77,7 +130,10 @@ const Navbar = () => {
                     }
                   )}
                 >
-                  {link.name}
+                  <div className="flex items-center">
+                    {link.icon}
+                    {link.name}
+                  </div>
                 </div>
               </Link>
             ))}
@@ -98,7 +154,10 @@ const Navbar = () => {
                     }
                   )}
                 >
-                  {link.name}
+                  <div className="flex items-center">
+                    {link.icon}
+                    {link.name}
+                  </div>
                 </div>
               </Link>
             ))}
