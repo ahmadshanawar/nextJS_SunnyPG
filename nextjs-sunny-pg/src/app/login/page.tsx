@@ -1,4 +1,5 @@
 "use client";
+import useUserStore from "@/lib/store/userStore";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,8 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-
+  const { setUserId, setRole } = useUserStore();
+  
   async function signInWithEmail(email: string, password: string) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -18,10 +20,7 @@ export default function Home() {
         password,
       });
       if (error) return error;
-      if (data) {
-        console.log("loggged in:", data);
-        return data;
-      }
+      if (data) return data;
     } catch (error) {
       return error;
     }
@@ -33,18 +32,23 @@ export default function Home() {
     } else {
       setError("");
       const res: any = await signInWithEmail(email, password);
-      if (res?.user) {        
+      if (res?.user) {
         localStorage.setItem("supabaseSession", JSON.stringify(res?.session));
+        setUserId(res?.user?.id);
+
         let { data: tennants, error }: { data: any; error: any } =
           await supabase
             .from("Tennants")
             .select("role")
             .eq("uid", res?.user?.id);
-        if (tennants)
+
+        if (tennants) {
+          setRole(tennants[0]?.role);
           tennants[0]?.role === "admin"
             ? router.push("admin-dashboard")
             : router.push("user-dashboard");
-        if (error) console.log(error);        
+        }
+        if (error) console.log(error);
       } else {
         setError("Invalid Username or Password");
       }
