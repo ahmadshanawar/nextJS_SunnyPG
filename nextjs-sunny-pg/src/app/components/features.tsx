@@ -30,7 +30,7 @@ export default function Features() {
     <div className="my-6 mx-auto">
       <Swiper
         modules={[Navigation]}
-        spaceBetween={10}
+        spaceBetween={10.0}
         slidesPerView={1}
         navigation
         breakpoints={{

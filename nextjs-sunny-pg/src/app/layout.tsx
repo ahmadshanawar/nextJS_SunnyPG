@@ -21,7 +21,7 @@ export default function RootLayout({
         <div>
           <Navbar />
         </div>
-        <div className="mx-5">{children}</div>
+        <div>{children}</div>
         <hr className="my-5" />
         <footer className="footer footer-center bg-base-300 text-base-content p-4 text-center my-5">
           <aside>

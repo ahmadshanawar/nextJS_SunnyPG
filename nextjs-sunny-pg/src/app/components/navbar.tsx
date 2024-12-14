@@ -23,13 +23,13 @@ const Navbar = () => {
       id: 1,
       name: "Home",
       href: "/",
-      icon: <FaHome className="mr-1 text-gray-300" />,
+      icon: <FaHome className="mr-1 text-gray-500" />,
     },
     {
       id: 2,
       name: "Pricing",
       href: "/pricing",
-      icon: <FaMoneyBillWave className="mr-1 text-gray-300" />,
+      icon: <FaMoneyBillWave className="mr-1 text-gray-500" />,
     },
   ];
 
@@ -38,7 +38,7 @@ const Navbar = () => {
       id: 4,
       name: "Dashboard",
       href: `${role === "user" ? "/user-dashboard" : "/admin-dashboard"}`,
-      icon: <FaTachometerAlt className="mr-1 text-gray-300" />,
+      icon: <FaTachometerAlt className="mr-1 text-gray-500" />,
     },
   ];
 
@@ -47,7 +47,7 @@ const Navbar = () => {
       id: 5,
       name: "Logout",
       href: "/login",
-      icon: <FaPowerOff className="mr-1 text-gray-300" />,
+      icon: <FaPowerOff className="mr-1 text-gray-500" />,
     },
   ];
 
@@ -71,7 +71,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-lg">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           {/* Website Icon and Title */}
           <div className="flex items-center">
             <Link href="/">
@@ -79,7 +79,7 @@ const Navbar = () => {
                 S
               </div>
             </Link>
-            <div className="text-[#3d3e40] text-xl md:text-2xl lg:text-3xl mx-2">
+            <div className="text-[#3d3e40] text-xl md:text-xl lg:text-2xl mx-2">
               Sunny Boys' Hostel & PG
             </div>
           </div>

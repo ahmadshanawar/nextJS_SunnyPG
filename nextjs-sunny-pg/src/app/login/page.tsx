@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HiUser } from "react-icons/hi"; // User icon from react-icons
 
-export default function Home() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const { setUserId, setRole } = useUserStore();
-  
+  const { setUserId } = useUserStore();
+
   async function signInWithEmail(email: string, password: string) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -35,19 +35,7 @@ export default function Home() {
       if (res?.user) {
         localStorage.setItem("supabaseSession", JSON.stringify(res?.session));
         setUserId(res?.user?.id);
-
-        let { data: tennants, error }: { data: any; error: any } =
-          await supabase
-            .from("Tennants")
-            .select("role")
-            .eq("uid", res?.user?.id);
-
-        if (tennants) {
-          setRole(tennants[0]?.role);
-          tennants[0]?.role === "admin"
-            ? router.push("admin-dashboard")
-            : router.push("user-dashboard");
-        }
+        router.push("/dashboard");
         if (error) console.log(error);
       } else {
         setError("Invalid Username or Password");
