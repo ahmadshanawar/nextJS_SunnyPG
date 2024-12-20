@@ -82,6 +82,7 @@ export default function Tennants() {
                 </option>
               </select>
             </div>
+            <h3 className="text-xl font-semibold ml-4">Tennants</h3>
           </div>
         </div>
         <hr className="h-px my-2 bg-gray-200 border-0" />

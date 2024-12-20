@@ -6,7 +6,8 @@ import clsx from "clsx";
 import { FaPen } from "react-icons/fa";
 import TenantEditDialog from "./tennant-edit-dialog";
 import { useState } from "react";
-import { addMonths, format } from "date-fns";
+import { format } from "date-fns";
+import TennatViewDialog from "./tennant-view-dialog";
 
 type UserDetails = {
   uid: string;
@@ -51,20 +52,33 @@ const StatusIndicator: React.FC<{ status: string }> = ({ status }) => {
 };
 
 const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const [openViewDialog, setOpenViewDialog] = useState<boolean>(false);
 
-  const handleEditClick = () => {
-    setOpen(true);
+  const handleEditDialogClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenEditDialog(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpen(false);
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+  };
+
+  const handleViewDialogClick = () => {
+    setOpenViewDialog(true);
+  };
+
+  const handleCloseViewDialog = () => {
+    setOpenViewDialog(false);
   };
   return (
     <div className="my-2 mx-2">
-      <div className="p-4 bg-white rounded-lg shadow-xl overflow-hidden flex flex-column">
+      <div
+        className="p-4 bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden flex flex-column"
+        onClick={handleViewDialogClick}
+      >
         {/* Image Section */}
-        <div className="relative w-16 h-16 m-2 ml-4">
+        <div className="relative w-16 h-16">
           <div className="w-full h-full rounded-full overflow-hidden">
             <Image
               src={user?.PhotoIds?.profileUrl || User}
@@ -76,44 +90,52 @@ const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
             />
           </div>
           <StatusIndicator status={user?.status} />
-          <div className="flex justify-center items-center mt-2">
-            <button
-              onClick={handleEditClick}
-              className="bg-purple-500 text-xs text-white px-2 py-1 rounded hover:bg-purple-800 transition flex items-center"
-            >
-              Edit
-              <FaPen className="ml-2" /> {/* Pencil icon with margin to the left */}
-            </button>
-          </div>
         </div>
         {/* Content Section */}
         <div className="ml-4">
-          <h2 className="text-lg font-semibold text-gray-800">{user?.name}</h2>
-          <p className="text-sm text-gray-600">
+          <div className="flex flex-row items-center">
+            <h2 className="text-lg font-semibold text-gray-800">{user?.name}</h2>
+            {user.status !== "Departed" && (
+              <FaPen
+                className="ml-3 text-gray-600 text-sm"
+                onClick={handleEditDialogClick}
+              />
+            )}
+          </div>
+
+          <p className="text-sm text-gray-600 whitespace-nowrap">
             <strong>Mobile:</strong> {user?.mobile}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 whitespace-nowrap">
             <strong>Email:</strong> {user?.email}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 whitespace-nowrap">
             <strong>Room: </strong>
             {user?.room_number}
           </p>
           {user.status === "Active" ? (
-            <p className="text-sm text-gray-600">
-              <strong>Billing Period: </strong>
-              {format(new Date(user?.start_date), "dd/MM/yyyy")}-
-              {format(addMonths(new Date(user?.start_date), 1), "dd/MM/yyyy")}
+            <p className="text-sm text-gray-600 whitespace-nowrap">
+              <strong>Check In Date: </strong>
+              {format(new Date(user?.start_date), "dd/MM/yyyy")}
             </p>
           ) : (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 whitespace-nowrap">
               <strong>Status: </strong>
               {user?.status}
             </p>
           )}
         </div>
       </div>
-      <TenantEditDialog uid={user.uid} isOpen={open} onClose={handleCloseDialog} />
+      <TenantEditDialog
+        uid={user.uid}
+        isOpen={openEditDialog}
+        onClose={handleCloseEditDialog}
+      />
+      <TennatViewDialog
+        uid={user.uid}
+        isOpen={openViewDialog}
+        onClose={handleCloseViewDialog}
+      />
     </div>
   );
 };
