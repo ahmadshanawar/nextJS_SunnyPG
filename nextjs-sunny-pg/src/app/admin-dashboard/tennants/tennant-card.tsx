@@ -83,10 +83,10 @@ const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
             <Image
               src={user?.PhotoIds?.profileUrl || User}
               alt={`Profile of ${user?.name}`}
-              width={128}
-              height={128}
+              width={256}
+              height={256}
               className="object-cover aspect-square"
-              style={{ width: "100%", height: "auto" }}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
           <StatusIndicator status={user?.status} />
@@ -105,9 +105,6 @@ const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
 
           <p className="text-sm text-gray-600 whitespace-nowrap">
             <strong>Mobile:</strong> {user?.mobile}
-          </p>
-          <p className="text-sm text-gray-600 whitespace-nowrap">
-            <strong>Email:</strong> {user?.email}
           </p>
           <p className="text-sm text-gray-600 whitespace-nowrap">
             <strong>Room: </strong>

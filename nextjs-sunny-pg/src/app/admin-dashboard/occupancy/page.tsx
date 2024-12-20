@@ -91,7 +91,7 @@ const RoomBoxContainer = () => {
           >
             {/* Room Number */}
             <h3 className="text-2xl font-bold">{occupancy.id}</h3>
-            <hr />
+            <hr className="mt-1" />
             {/* Bed Icons and Tennant Names side by side */}
             <div className="gap-4 justify-start mt-2">
               {[...Array(occupancy.max_tennant)].map((_, index) => (
@@ -118,7 +118,7 @@ const RoomBoxContainer = () => {
                   value={newMaxTenant || occupancy.max_tennant}
                   min="1"
                   onChange={(e) => setNewMaxTenant(Number(e.target.value))}
-                  className="w-16 p-2 rounded border border-gray-300"
+                  className="w-16 p-1 rounded border border-gray-300"
                 />
               ) : (
                 <button
