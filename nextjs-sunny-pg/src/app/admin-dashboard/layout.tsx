@@ -29,10 +29,8 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
+    <div className="flex h-[85vh]">
       <div
-        z-10
         className={clsx(
           "bg-gray-800 text-white transition-all duration-300 z-20",
           isCollapsed ? "w-0 overflow-hidden" : "w-64"
@@ -46,8 +44,6 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
             {isCollapsed ? <FaBars /> : <FaXmark />}
           </button>
         </div>
-
-        {/* Render the menu only if sidebar is expanded */}
         {!isCollapsed && (
           <ul className="space-y-4 mt-4 ml-3">
             {menuItems.map((item) => (
@@ -69,18 +65,15 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
           </ul>
         )}
       </div>
-
-      {/* Menu bar button when sidebar is collapsed */}
       {isCollapsed && (
         <button
-          className="absolute top-1 left-3 bg-gray-800 text-white p-4 rounded-md"
+          className="absolute top-8 mt-8 left-3 bg-gray-800 text-white p-3 rounded-md z-20"
           onClick={() => setIsCollapsed(false)}
         >
           <FaBars />
         </button>
       )}
 
-      {/* Content Area */}
       <div className="absolute">{children}</div>
     </div>
   );

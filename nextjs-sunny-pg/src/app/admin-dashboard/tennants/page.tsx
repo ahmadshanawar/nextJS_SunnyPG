@@ -1,27 +1,99 @@
-import TennantCard from "@/app/components/tennant-card";
-import { FaFilter } from "react-icons/fa";
+"use client";
+import TennantCard from "./tennant-card";
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { FaUsers } from "react-icons/fa";
 
-import { FaArrowUpWideShort } from "react-icons/fa6";
+type UserDetails = {
+  uid: string;
+  name: string;
+  mobile: string;
+  adhaar: string;
+  email: string;
+  status: string;
+  mobile_verified: boolean;
+  role: string;
+  occupation: string;
+  institution: string;
+  room_number: number;
+  room_type: string;
+  start_date: string;
+  PhotoIds: {
+    profileUrl: string;
+    adhaarFrontUrl: string;
+    adhaarBackUrl: string;
+    otherIdUrl: string;
+  };
+};
 
 export default function Tennants() {
+  const [users, setUsers] = useState<UserDetails[]>([]);
+  const [selectedUserType, setSelectedUserType] = useState("Pending");
+  async function getUsers() {
+    try {
+      const { data, error } = await supabase
+        .from("Tennants")
+        .select(`*,PhotoIds(*)`)
+        .eq("role", "user")
+        .eq("status", selectedUserType);
+
+      if (error) console.log(error);
+      if (data) {
+        setUsers(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUserType(event.target.value);
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, [selectedUserType]);
+
   return (
     <>
-      <div className="mt-4 mx-4">
+      <div className="mt-4 mx-2 w-[95vw] z-40">
         <div className="flex justify-between">
-          <div className="mx-2 my-2 text-bold text-xl text-gray-800">Tennants</div>
+          <div className="my-2 ml-5 text-bold text-xl text-gray-800"></div>
           <div className="flex justify-end items-center">
-            <button className="bg-gray-100 rounded-md py-1 hover:bg-gray-300 mr-2">
-              <FaArrowUpWideShort className="mx-2 text-3xl text-gray-700" />
-            </button>
-            <button className="bg-gray-100 rounded-md py-2 hover:bg-gray-300">
-              <FaFilter className="mx-2 text-2xl text-gray-700" />
-            </button>
+            <div className="w-full max-w-xs mx-auto mr-2 flex flex-row items-center">
+              <FaUsers className="text-3xl text-gray-600 text-bold mr-1" />
+              <select
+                id="statusDropdown"
+                value={selectedUserType || ""}
+                onChange={handleChange}
+                className="text-sm block w-full border border-gray-300 rounded-md shadow-sm p-1 bg-white text-gray-700 focus:outline-none hover:ring-1 focus:ring-purple-500 hover:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              >
+                <option value="Active" className="text-sm">
+                  Active
+                </option>
+                <option value="Awaiting Approval" className="text-sm">
+                  Awaiting Approval
+                </option>
+                <option value="Pending" className="text-sm">
+                  Pending
+                </option>
+                <option value="Departed" className="text-sm">
+                  Departed
+                </option>
+              </select>
+            </div>
           </div>
         </div>
         <hr className="h-px my-2 bg-gray-200 border-0" />
       </div>
-      <div>
-        <TennantCard />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4">
+        {users?.map((user: UserDetails) => {
+          return (
+            <div key={user.uid}>
+              <TennantCard user={user} />
+            </div>
+          );
+        })}
       </div>
     </>
   );

@@ -18,21 +18,3 @@ export const restoreSession = async () => {
     }
   }
 };
-
-export const checkForSession = async () => {
-  const storedSession = localStorage.getItem("supabaseSession");
-  if (storedSession) {
-    const session = JSON.parse(storedSession);
-    if (session?.access_token) {
-      return session;
-    } else {
-      console.log("No Session found");
-      localStorage.removeItem("supabaseSession");
-      return false;
-    }
-  } else {
-    console.log("No User Session found");
-    localStorage.removeItem("supabaseSession");
-    return false;
-  }
-};

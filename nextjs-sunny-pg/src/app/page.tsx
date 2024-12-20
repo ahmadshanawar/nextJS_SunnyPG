@@ -7,7 +7,7 @@ import useUserStore from "@/lib/store/userStore";
 export default function Home() {
   const { userId } = useUserStore();
   useEffect(() => {
-    if (userId) restoreSession();
+    restoreSession();
   }, []);
   return (
     <div>

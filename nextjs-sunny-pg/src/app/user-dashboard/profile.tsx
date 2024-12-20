@@ -232,6 +232,22 @@ const Profile = () => {
         <p className="text-gray-700 font-semibold">{userData.occupation}</p>
         <p className="text-lg font-bold text-gray-600">{userData.institution}</p>
       </div>
+      <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+        <button
+          onClick={handleClick}
+          className="my-4 bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded disabled:opacity-50"
+          disabled={isLoadingPhoto}
+        >
+          Change Profile Picture
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          ref={fileInputRef}
+          className="hidden"
+        />
+      </div>
 
       {/* Error / Success Message */}
       {message && (
@@ -248,23 +264,6 @@ const Profile = () => {
       <div className="mt-2 w-full">
         {isEditing ? (
           <>
-            <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-              <button
-                onClick={handleClick}
-                className="my-4 bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded disabled:opacity-50"
-                disabled={isLoadingPhoto}
-              >
-                Change Profile Picture
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                ref={fileInputRef}
-                className="hidden"
-              />
-            </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
               <div>
                 <label

@@ -1,26 +1,11 @@
 "use client";
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
+
 import Profile from "./profile";
-import { useRouter } from "next/navigation";
-import { checkForSession } from "@/lib/sessions";
 import IdUpload from "./id-upload";
 import useUserStore from "@/lib/store/userStore";
 
 const UserDashboard: React.FC = () => {
-  const router = useRouter();
-  const { status, setUserId, userId } = useUserStore();
-  const checkSession = async () => {
-    let res = await checkForSession();
-    if (!res) {
-      router.push("/");
-    }
-    setUserId(res?.user?.id);
-  };
-  useEffect(() => {
-    if (!userId) checkSession();
-  }, []);
-
+  const { userId } = useUserStore();
   return (
     <>
       {userId ? (

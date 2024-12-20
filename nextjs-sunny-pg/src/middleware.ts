@@ -9,11 +9,17 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   if (!session) {
+    console.log("Middleware: No Session found");
     return NextResponse.rewrite(new URL("/login", req.url));
   }
   return res;
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/admin-dashboard/tennants",
+    "/admin-dashboard/admin-dash",
+    "/admin-dashboard/occupancy",
+    "/user-dashboard",
+  ],
 };
