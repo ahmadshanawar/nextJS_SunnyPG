@@ -3,6 +3,7 @@ import TennantCard from "./tennant-card";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { FaUsers } from "react-icons/fa";
+import Loader from "react-js-loader";
 
 type UserDetails = {
   uid: string;
@@ -35,7 +36,8 @@ export default function Tennants() {
         .from("Tennants")
         .select(`*,PhotoIds(*)`)
         .eq("role", "user")
-        .eq("status", selectedUserType);
+        .eq("status", selectedUserType)
+        .order("room_number", { ascending: true });
 
       if (error) console.log(error);
       if (data) {
@@ -82,20 +84,33 @@ export default function Tennants() {
                 </option>
               </select>
             </div>
-            <h3 className="text-xl font-semibold ml-4">Tennants</h3>
+            <h3 className="text-xl font-semibold">Tennants</h3>
           </div>
         </div>
         <hr className="h-px my-2 bg-gray-200 border-0" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4">
-        {users?.map((user: UserDetails) => {
-          return (
-            <div key={user.uid}>
-              <TennantCard user={user} />
-            </div>
-          );
-        })}
-      </div>
+
+      {users?.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4 mx-5">
+          {users?.map((user: UserDetails) => {
+            return (
+              <div key={user.uid}>
+                <TennantCard user={user} />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div role="status" className="flex items-center justify-center h-[70vh]">
+          <Loader
+            type="hourglass"
+            bgColor={"#7c3ab3"}
+            color={"#828282"}
+            title={"Loading..."}
+            size={60}
+          />
+        </div>
+      )}
     </>
   );
 }

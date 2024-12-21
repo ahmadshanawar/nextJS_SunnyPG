@@ -10,6 +10,7 @@ import { isValid } from "@make-sense/adhaar-validator";
 import RoomDropdown from "./rooms_dropdown";
 import ConfirmationDialog from "@/app/components/confirmation-dialog";
 import { format } from "date-fns";
+import Loader from "react-js-loader";
 
 type UserDetails = {
   uid: string;
@@ -341,7 +342,15 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
               </div>
             </>
           ) : (
-            <p>Loading...</p>
+            <div role="status" className="flex items-center justify-center h-[70vh]">
+              <Loader
+                type="hourglass"
+                bgColor={"#7c3ab3"}
+                color={"#828282"}
+                title={"Loading..."}
+                size={60}
+              />
+            </div>
           )}
         </div>
 

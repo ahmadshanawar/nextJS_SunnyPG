@@ -5,6 +5,7 @@ import Image from "next/image";
 import User from "../../../../public/images/user.png";
 import { supabase } from "../../../lib/supabase"; // Assuming you've already set up Supabase client
 import { FaXmark } from "react-icons/fa6";
+import Loader from "react-js-loader";
 
 type UserDetails = {
   uid: string;
@@ -182,7 +183,15 @@ const TennatViewDialog: React.FC<ViewUserDialogProps> = ({
               </div>
             </div>
           ) : (
-            <p className="text-gray-500 text-center">Loading...</p>
+            <div role="status" className="flex items-center justify-center h-[70vh]">
+              <Loader
+                type="hourglass"
+                bgColor={"#7c3ab3"}
+                color={"#828282"}
+                title={"Loading..."}
+                size={60}
+              />
+            </div>
           )}
         </div>
       </div>
