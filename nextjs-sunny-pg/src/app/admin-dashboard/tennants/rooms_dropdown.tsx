@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 
 interface Room {
   id: number;
+  max_tennant: number;
+  occupancy: number;
 }
 
 interface RoomDropdownProps {
@@ -19,7 +21,9 @@ const RoomDropdown: React.FC<RoomDropdownProps> = ({ onRoomSelect, roomNumber })
     const fetchRooms = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from("Occupancy").select("id");
+        const { data, error } = await supabase
+          .from("Occupancy")
+          .select("id, max_tennant, occupancy");
 
         if (error) {
           console.error("Error fetching rooms:", error.message);
@@ -61,8 +65,17 @@ const RoomDropdown: React.FC<RoomDropdownProps> = ({ onRoomSelect, roomNumber })
             <option value="" disabled>
               Choose a room
             </option>
-            {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
+            {rooms?.map((room) => (
+              <option
+                key={room.id}
+                value={room.id}
+                disabled={room.occupancy >= room.max_tennant} // Disable if occupancy is full
+                className={
+                  room.occupancy >= room.max_tennant
+                    ? "bg-gray-300 text-gray-900"
+                    : ""
+                }
+              >
                 Room {room.id}
               </option>
             ))}

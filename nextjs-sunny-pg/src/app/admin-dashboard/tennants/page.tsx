@@ -95,7 +95,7 @@ export default function Tennants() {
           {users?.map((user: UserDetails) => {
             return (
               <div key={user.uid}>
-                <TennantCard user={user} />
+                <TennantCard user={user} refreshUsers={getUsers} />
               </div>
             );
           })}

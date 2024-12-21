@@ -32,6 +32,7 @@ type UserDetails = {
 
 type TennantCardProps = {
   user: UserDetails;
+  refreshUsers: () => void;
 };
 
 const StatusIndicator: React.FC<{ status: string }> = ({ status }) => {
@@ -51,7 +52,7 @@ const StatusIndicator: React.FC<{ status: string }> = ({ status }) => {
   );
 };
 
-const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
+const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openViewDialog, setOpenViewDialog] = useState<boolean>(false);
 
@@ -62,6 +63,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
+    refreshUsers();
   };
 
   const handleViewDialogClick = () => {
@@ -78,28 +80,29 @@ const TennantCard: React.FC<TennantCardProps> = ({ user }) => {
         onClick={handleViewDialogClick}
       >
         {/* Image Section */}
-        <div className="relative w-16 h-16">
-          <div className="w-full h-full rounded-full overflow-hidden">
-            <Image
-              src={user?.PhotoIds?.profileUrl || User}
-              alt={`Profile of ${user?.name}`}
-              width={256}
-              height={256}
-              className="object-cover aspect-square"
-              style={{ width: "auto", height: "auto" }}
-            />
+        <div className="flex items-center">
+          <div className="relative w-16 h-16">
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <Image
+                src={user?.PhotoIds?.profileUrl || User}
+                alt={`Profile of ${user?.name}`}
+                width={256}
+                height={256}
+                className="object-cover aspect-square"
+                style={{ width: "auto", height: "auto" }}
+              />
+            </div>
+            <StatusIndicator status={user?.status} />
           </div>
-          <StatusIndicator status={user?.status} />
         </div>
         {/* Content Section */}
         <div className="ml-4">
           <div className="flex flex-row items-center">
             <h2 className="text-lg font-semibold text-gray-800">{user?.name}</h2>
             {user.status !== "Departed" && (
-              <FaPen
-                className="ml-3 text-gray-600 text-sm"
-                onClick={handleEditDialogClick}
-              />
+              <button onClick={handleEditDialogClick}>
+                <FaPen className="ml-3 text-gray-600 hover:text-gray-900" />
+              </button>
             )}
           </div>
 

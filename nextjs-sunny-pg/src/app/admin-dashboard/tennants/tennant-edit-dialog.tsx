@@ -50,6 +50,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   const [editedData, setEditedData] = useState<UserDetails | null>(null);
   const [loading, setLoading] = useState<Boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isModified, setIsModified] = useState(false);
 
   useEffect(() => {
     if (uid && isOpen) {
@@ -74,6 +75,14 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     }
   }, [uid, isOpen]);
 
+  useEffect(() => {
+    if (tenantData && editedData) {
+      const isDataModified =
+        JSON.stringify(tenantData) !== JSON.stringify(editedData);
+      setIsModified(isDataModified);
+    }
+  }, [editedData, tenantData]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -85,13 +94,9 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const updateTennantsTable = async () => {
     if (editedData) {
-      if (!isValid(editedData.adhaar)) {
-        alert("Aadhaar Number is invalid!");
-        return;
-      }
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("Tennants")
         .update({
           name: editedData.name,
@@ -106,10 +111,68 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
           mobile_verified: editedData.mobile_verified,
         })
         .eq("uid", editedData.uid);
+      return { data, error };
+    }
+    return { data: null, error: null };
+  };
+  const incrementOccupancy = async () => {
+    if (editedData) {
+      const { error } = await supabase.rpc("incrementoccupancy", {
+        x: 1,
+        row_id: editedData?.room_number as number,
+      });
 
-      if (error) {
-        console.error(error);
+      return { data: null, error };
+    }
+    return { data: null, error: null };
+  };
+
+  const decrementOccupancy = async () => {
+    if (editedData) {
+      const { error } = await supabase.rpc("incrementoccupancy", {
+        x: -1,
+        row_id: editedData?.room_number as number,
+      });
+
+      return { data: null, error };
+    }
+    return { data: null, error: null };
+  };
+
+  const handleSubmit = async () => {
+    if (editedData) {
+      if (!isValid(editedData.adhaar)) {
+        alert("Aadhaar Number is invalid!");
+        return;
+      }
+
+      const updateResult = await updateTennantsTable();
+      if (updateResult.error) {
+        console.error("Error updating Tennants table:", updateResult.error);
       } else {
+        console.log("Successfully updated Tennants table:", updateResult.data);
+      }
+
+      if (editedData.status === "Active") {
+        const incrementResult = await incrementOccupancy();
+        if (incrementResult.error) {
+          console.error("Error incrementing occupancy:", incrementResult.error);
+        } else {
+          console.log("Successfully incremented occupancy.");
+        }
+      } else if (editedData.status === "Departed") {
+        const decrementResult = await decrementOccupancy();
+        if (decrementResult.error) {
+          console.error("Error decrementing occupancy:", decrementResult.error);
+        } else {
+          console.log("Successfully decremented occupancy.");
+        }
+      }
+
+      if (updateResult.error) {
+        console.error("One or more errors occurred during the operation.");
+      } else {
+        console.log("All operations completed successfully.");
         onClose();
       }
     }
@@ -335,7 +398,10 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-purple-600 hover:bg-purple-800 text-white px-4 py-2 rounded"
+                  disabled={!isModified} // Disable if not modified
+                  className={`${
+                    isModified ? "bg-purple-500" : "bg-gray-400"
+                  } text-white rounded py-2 px-4 focus:outline-none`}
                 >
                   Save
                 </button>

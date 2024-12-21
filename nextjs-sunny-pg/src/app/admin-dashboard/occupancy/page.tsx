@@ -50,9 +50,19 @@ const RoomBoxContainer = () => {
   }, []);
 
   // Handle max_tennant update
+  // Handle max_tennant update
   const handleUpdateMaxTenant = async (roomId: number) => {
     if (newMaxTenant === null || newMaxTenant < 1 || newMaxTenant > 4) {
       alert("Max Tenant value is invalid");
+      return;
+    }
+
+    // Find the room's current occupancy
+    const roomOccupancy = occupancies.find((room) => room.id === roomId)?.occupancy;
+
+    // Check if the new max_tennant is greater than the current occupancy
+    if (roomOccupancy && newMaxTenant < roomOccupancy) {
+      alert("Cannot set max_tennant less than current occupancy.");
       return;
     }
 
