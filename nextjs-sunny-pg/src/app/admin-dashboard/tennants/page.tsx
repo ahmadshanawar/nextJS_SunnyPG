@@ -65,7 +65,7 @@ export default function Tennants() {
 
   return (
     <>
-      <div className="mt-4 mx-2 w-[95vw] z-20">
+      <div className="mt-4 mx-2 w-[95vw]">
         <div className="flex justify-between">
           <div className="my-2 ml-5 text-bold text-xl text-gray-800"></div>
           <div className="flex justify-end items-center">
@@ -91,7 +91,7 @@ export default function Tennants() {
                 </option>
               </select>
             </div>
-            <h3 className="text-xl font-semibold">Tennants</h3>
+            <h3 className="text-lg font-semibold">Tennants</h3>
           </div>
         </div>
         <hr className="h-px my-2 bg-gray-200 border-0" />
@@ -100,7 +100,7 @@ export default function Tennants() {
         <div className="text-center my-5">No Users Found</div>
       )}
       {!loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4 mx-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4 mx-2">
           {users?.map((user: UserDetails) => {
             return (
               <div key={user.uid}>

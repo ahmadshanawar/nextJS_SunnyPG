@@ -5,10 +5,11 @@ import User from "../../../../public/images/user.png";
 import clsx from "clsx";
 import { FaPen, FaRupeeSign } from "react-icons/fa";
 import TenantEditDialog from "./tennant-edit-dialog";
-import { useState } from "react";
-import { format } from "date-fns";
+import { useState, useEffect } from "react";
+import { format, parseISO, isWithinInterval } from "date-fns";
 import TennatViewDialog from "./tennant-view-dialog";
 import TenantPaymentEditDialog from "./payment-edit-dialog";
+import { supabase } from "@/lib/supabase";
 
 type UserDetails = {
   uid: string;
@@ -57,6 +58,38 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openViewDialog, setOpenViewDialog] = useState<boolean>(false);
   const [openPaymentsDialog, setOpenPaymentDialog] = useState<boolean>(false);
+  const [rentStatus, setRentStatus] = useState<string>("Pending");
+  const [billingPeriod, setBillingPeriod] = useState<string>("");
+
+  useEffect(() => {
+    const fetchRentStatus = async () => {
+      const { data, error } = await supabase
+        .from("Payments")
+        .select("*")
+        .eq("uid", user.uid);
+
+      if (error) {
+        console.error("Error fetching payment data:", error);
+      } else {
+        const today = new Date();
+        const currentPayment = data.find((payment: any) =>
+          isWithinInterval(today, {
+            start: parseISO(payment.billing_start_date),
+            end: parseISO(payment.billing_end_date),
+          })
+        );
+
+        if (currentPayment) {
+          setRentStatus(currentPayment.paid ? "Paid" : "Pending");
+          setBillingPeriod(
+            `${currentPayment.billing_start_date} - ${currentPayment.billing_end_date}`
+          );
+        }
+      }
+    };
+
+    fetchRentStatus();
+  }, [user.uid]);
 
   const handleEditDialogClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,6 +101,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   };
 
   const handleClosePaymentDialog = () => {
+    refreshUsers();
     setOpenPaymentDialog(false);
   };
 
@@ -86,11 +120,11 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   return (
     <div className="my-2 mx-2">
       <div
-        className="p-4 h-[135px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden"
+        className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden"
         onClick={handleViewDialogClick}
       >
         {/* Image Section */}
-        <div className="flex items-start">
+        <div className="flex items-start items-center">
           <div className="relative w-16 h-16">
             <div className="w-full h-full rounded-full overflow-hidden">
               <Image
@@ -132,11 +166,26 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
                 <strong>Room: </strong>
                 {user?.room_number}
               </p>
+
               {user.status === "Active" ? (
-                <p className="text-sm text-gray-600 whitespace-nowrap">
-                  <strong>Check In Date: </strong>
-                  {format(new Date(user?.start_date), "dd/MM/yyyy")}
-                </p>
+                <>
+                  <p className="text-sm text-gray-600 whitespace-nowrap">
+                    <strong>Rent: </strong>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        rentStatus === "Paid"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {rentStatus}
+                    </span>
+                  </p>
+                  <p className="text-sm text-gray-600 whitespace-nowrap">
+                    <strong>Period: </strong>
+                    <span className="text-xs">{billingPeriod}</span>
+                  </p>
+                </>
               ) : (
                 <p className="text-sm text-gray-600 whitespace-nowrap">
                   <strong>Status: </strong>

@@ -916,6 +916,15 @@ export default function Pricing() {
           </a>
         </div>
       </div>
+      <hr className="my-5" />
+      <footer className="relative footer footer-center bg-base-300 text-base-content p-4 text-center my-5">
+        <aside>
+          <p>
+            Copyright © {new Date().getFullYear()} - All right reserved by Sunny Boys
+            Hostel & PG
+          </p>
+        </aside>
+      </footer>
     </div>
   );
 }

@@ -150,25 +150,25 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Billing Start Date
                       </th>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Billing End Date
                       </th>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amount(₹)
                       </th>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Number of Days
                       </th>
-                      <th className="px-4 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Paid On
                       </th>
-                      <th className="px-4 py-2 bg-gray-50"></th>
+                      <th className="px-1 py-2 bg-gray-50"></th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -179,7 +179,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                       );
                       return (
                         <tr key={payment.pay_id}>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             <input
                               className="border rounded p-1"
                               type="date"
@@ -193,7 +193,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                               }
                             />
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             <input
                               className="border rounded p-1"
                               type="date"
@@ -207,7 +207,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                               }
                             />
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             <input
                               min={0}
                               className="border rounded p-1"
@@ -222,7 +222,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                               }
                             />
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             <select
                               className="border rounded p-1"
                               value={payment.paid ? "Paid" : "Pending"}
@@ -238,15 +238,15 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                               <option value="Pending">Pending</option>
                             </select>
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             {daysDifference}
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             {payment.paid_on
                               ? format(parseISO(payment.paid_on), "MM-dd-yyyy")
                               : "N/A"}
                           </td>
-                          <td className="px-4 py-2 whitespace-nowrap">
+                          <td className="px-1 py-2 whitespace-nowrap">
                             <div className="flex items-center">
                               <button
                                 onClick={() => handleSave(payment.pay_id)}

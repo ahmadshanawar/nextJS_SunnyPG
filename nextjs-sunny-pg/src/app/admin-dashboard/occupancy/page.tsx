@@ -89,7 +89,7 @@ const RoomBoxContainer = () => {
   };
 
   return (
-    <div className="mx-6 w-[95vw] z-40">
+    <div className="mx-6">
       <div className="flex items-center justify-end mt-3">
         <h3 className="text-xl font-semibold">Hostel Occupancy</h3>
       </div>
