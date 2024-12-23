@@ -68,7 +68,7 @@ const TennatViewDialog: React.FC<ViewUserDialogProps> = ({
   return (
     isOpen && (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
-        <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full overflow-hidden h-auto max-h-[90vh] p-8">
+        <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full overflow-hidden h-auto max-h-[75vh] p-8">
           {/* Dialog Header */}
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-semibold text-gray-800">Tenant Details</h3>
