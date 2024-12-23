@@ -125,15 +125,13 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   };
   return (
     <div className="my-2 mx-2">
-      <div
-        className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden"
-        onClick={handleViewDialogClick}
-      >
+      <div className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden">
         {/* Image Section */}
         <div className="flex items-start items-center">
           <div className="relative w-16 h-16">
             <div className="w-full h-full rounded-full overflow-hidden">
               <Image
+                onClick={handleViewDialogClick}
                 src={user?.PhotoIds?.profileUrl || User}
                 alt={`Profile of ${user?.name}`}
                 width={256}
