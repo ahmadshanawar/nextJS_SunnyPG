@@ -19,9 +19,9 @@ export const LandingPage = () => {
             </h1>
             <p className="py-5 text-xl sm:text-xl text-[#3d3e3e]">
               Sunny Boys Hostel and PG, located opposite BBD University in Lucknow,
-              offers spacious and comfortable rooms with a peaceful environment.
-              Serving students since 2008, we provide all essential amenities for a
-              comfortable and productive stay.
+              offers spacious and comfortable rooms with a peaceful study
+              environment. Serving since 2008, we provide all essential amenities for
+              your comfortable and productive stay.
             </p>
             <div className="flex flex-col items-start sm:space-x-4 sm:space-y-0 sm:items-center sm:flex-row">
               <button
