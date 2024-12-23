@@ -145,8 +145,8 @@ const IdUpload = () => {
             src={imageUrl || User}
             alt="uploaded preview"
             className="w-full h-20"
-            height={150}
-            width={150}
+            height={250}
+            width={250}
           />
         )}
       </div>

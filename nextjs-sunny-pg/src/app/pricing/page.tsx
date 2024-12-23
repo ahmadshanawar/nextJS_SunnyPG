@@ -2,7 +2,7 @@
 
 export default function Pricing() {
   return (
-    <div className="bg-white px-6 py-24 sm:py-16 lg:px-8 mt-5">
+    <div className="bg-white px-6 py-1 sm:py-8 lg:px-1 mt-1">
       <div
         className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
         aria-hidden="true"
@@ -10,15 +10,15 @@ export default function Pricing() {
         <div className="mx-auto"></div>
       </div>
       <div className="mx-auto max-w-4xl text-center">
-        <p className="text-balance text-6xl font-semibold tracking-tight text-purple-800 sm:text-6xl">
+        <p className="text-balance text-2xl font-semibold tracking-tight text-purple-800 sm:text-4xl">
           Choose the right plan for you
         </p>
       </div>
-      <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
+      <p className="mx-auto mt-4 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
         Choose an affordable plan that is packed with the best amenities and comfort
         for your stay with us.
       </p>
-      <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+      <div className="mx-auto mt-6 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <div className="rounded-3xl rounded-t-3xl bg-white/60 p-8 ring-1 ring-gray-900/10 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
           <h3 id="tier-hobby" className="text-base/7 font-semibold text-indigo-600">
             Private Room

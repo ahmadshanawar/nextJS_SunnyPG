@@ -30,8 +30,8 @@ export default function Features() {
     <div className="my-6 mx-auto">
       <Swiper
         modules={[Navigation]}
-        spaceBetween={10.0}
-        slidesPerView={1}
+        spaceBetween={1}
+        slidesPerView={1.25}
         navigation
         breakpoints={{
           640: { slidesPerView: 2 },
@@ -41,7 +41,7 @@ export default function Features() {
         className="w-full"
       >
         {featuresData.map((feature: any, index: number) => (
-          <SwiperSlide key={index} className="ml-9">
+          <SwiperSlide key={index} className="ml-2">
             <FeatureCard
               title={feature.title}
               subtext={feature.subtext}
