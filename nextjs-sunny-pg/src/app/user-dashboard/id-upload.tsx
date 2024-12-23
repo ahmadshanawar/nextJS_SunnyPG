@@ -25,14 +25,11 @@ const IdUpload = () => {
     adhaarBack: false,
     alternateId: false,
   });
-
+  const fetchImages = async () => {
+    const urls = await fetchIdPhotosUrl(userId);
+    setImageUrls(urls);
+  };
   useEffect(() => {
-    // Fetch the image URLs when the component mounts
-    const fetchImages = async () => {
-      const urls = await fetchIdPhotosUrl(userId);
-      setImageUrls(urls);
-    };
-
     fetchImages();
   }, [userId]);
 
@@ -46,7 +43,7 @@ const IdUpload = () => {
 
         if (error) throw error;
         const urls = {
-          profile: data[0]?.profileUrl,
+          profileUrl: data[0]?.profileUrl,
           adhaarFront: data[0]?.adhaarFrontUrl,
           adhaarBack: data[0]?.adhaarBackUrl,
           alternateId: data[0]?.otherIdUrl,
@@ -55,7 +52,7 @@ const IdUpload = () => {
       } catch (error) {
         console.log("Error fetching image URLs:", error);
         return {
-          profile: null,
+          profileUrl: null,
           adhaarFront: null,
           adhaarBack: null,
           alternateId: null,
@@ -94,11 +91,10 @@ const IdUpload = () => {
         return;
       }
       const compressedFile: any = await compressImage(file);
-      await uploadPhoto(userId, pathName, idType, compressedFile);
+      const updatedUrl = await uploadPhoto(userId, pathName, idType, compressedFile);
 
-      // After uploading, fetch the updated URLs
-      const urls = await fetchIdPhotosUrl(userId);
-      setImageUrls(urls);
+      // Update the state with the new URL
+      setImageUrls((prev: any) => ({ ...prev, [idType]: updatedUrl }));
 
       // Set loading state to false after fetching new URLs
       setLoadingStates((prev) => ({ ...prev, [idType]: false }));
@@ -250,8 +246,7 @@ const IdUpload = () => {
             disabled={
               !imageUrls?.adhaarFront ||
               !imageUrls?.adhaarBack ||
-              !imageUrls?.alternateId ||
-              !imageUrls?.profile
+              !imageUrls?.alternateId
             }
           >
             Register
@@ -263,9 +258,9 @@ const IdUpload = () => {
           <div className="bg-white p-6 rounded-md w-full max-w-sm">
             <h3 className="text-lg font-semibold mb-4">Confirm Registration</h3>
             <p className="text-gray-700 mb-6">
-              Are you sure you want to proceed with registration? Please ensure the
-              uploaded ID proofs are correct for a successfull registration. All the
-              information provided will be verified by us!
+              Are you sure you want to proceed with new registration? Please ensure
+              uploaded ID proofs are correct. All the information provided will be
+              verified!
             </p>
             <div className="flex justify-end gap-4">
               <button

@@ -1,8 +1,10 @@
 "use client";
+import { useRouter } from "next/navigation";
 import Login from "../login/page";
 import Features from "./features";
 
 export const LandingPage = () => {
+  const router = useRouter();
   return (
     <div className="container mx-auto px-4 lg:px-8">
       <div className="flex flex-wrap items-center">
@@ -22,7 +24,10 @@ export const LandingPage = () => {
               comfortable and productive stay.
             </p>
             <div className="flex flex-col items-start sm:space-x-4 sm:space-y-0 sm:items-center sm:flex-row">
-              <button className="px-6 py-3 bg-purple-800 text-xl font-bold text-white rounded-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <button
+                onClick={() => router.push("signup")}
+                className="px-6 py-3 bg-purple-800 text-xl font-bold text-white rounded-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
                 Book Now
               </button>
             </div>

@@ -3,11 +3,12 @@
 import Image from "next/image";
 import User from "../../../../public/images/user.png";
 import clsx from "clsx";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaRupeeSign } from "react-icons/fa";
 import TenantEditDialog from "./tennant-edit-dialog";
 import { useState } from "react";
 import { format } from "date-fns";
 import TennatViewDialog from "./tennant-view-dialog";
+import TenantPaymentEditDialog from "./payment-edit-dialog";
 
 type UserDetails = {
   uid: string;
@@ -55,10 +56,19 @@ const StatusIndicator: React.FC<{ status: string }> = ({ status }) => {
 const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openViewDialog, setOpenViewDialog] = useState<boolean>(false);
+  const [openPaymentsDialog, setOpenPaymentDialog] = useState<boolean>(false);
 
   const handleEditDialogClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setOpenEditDialog(true);
+  };
+  const handlePaymentDialogClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenPaymentDialog(true);
+  };
+
+  const handleClosePaymentDialog = () => {
+    setOpenPaymentDialog(false);
   };
 
   const handleCloseEditDialog = () => {
@@ -76,11 +86,11 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   return (
     <div className="my-2 mx-2">
       <div
-        className="p-4 bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden flex flex-column"
+        className="p-4 h-[135px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden"
         onClick={handleViewDialogClick}
       >
         {/* Image Section */}
-        <div className="flex items-center">
+        <div className="flex items-start">
           <div className="relative w-16 h-16">
             <div className="w-full h-full rounded-full overflow-hidden">
               <Image
@@ -89,41 +99,52 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
                 width={256}
                 height={256}
                 className="object-cover aspect-square"
-                style={{ width: "auto", height: "auto" }}
               />
             </div>
             <StatusIndicator status={user?.status} />
           </div>
-        </div>
-        {/* Content Section */}
-        <div className="ml-4">
-          <div className="flex flex-row items-center">
-            <h2 className="text-lg font-semibold text-gray-800">{user?.name}</h2>
-            {user.status !== "Departed" && (
-              <button onClick={handleEditDialogClick}>
-                <FaPen className="ml-3 text-gray-600 hover:text-gray-900" />
-              </button>
-            )}
+          {/* Content Section */}
+          <div className="ml-4 flex-1">
+            <div className="flex justify-between items-center">
+              {/* Name aligned to the left */}
+              <h2 className="text-sm font-bold text-gray-800">{user?.name}</h2>
+              {/* Icons aligned to the right */}
+              <div className="flex space-x-1 items-center">
+                {user?.status === "Active" && (
+                  <FaRupeeSign
+                    className="text-gray-600 text-3xl hover:text-gray-900 border-2 p-1"
+                    onClick={handlePaymentDialogClick}
+                  />
+                )}
+                {user.status !== "Departed" && (
+                  <FaPen
+                    className="text-gray-600 text-3xl hover:text-gray-900 border-2 p-1"
+                    onClick={handleEditDialogClick}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="mt-2">
+              <p className="text-sm text-gray-600 whitespace-nowrap">
+                <strong>Mobile:</strong> {user?.mobile}
+              </p>
+              <p className="text-sm text-gray-600 whitespace-nowrap">
+                <strong>Room: </strong>
+                {user?.room_number}
+              </p>
+              {user.status === "Active" ? (
+                <p className="text-sm text-gray-600 whitespace-nowrap">
+                  <strong>Check In Date: </strong>
+                  {format(new Date(user?.start_date), "dd/MM/yyyy")}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-600 whitespace-nowrap">
+                  <strong>Status: </strong>
+                  {user?.status}
+                </p>
+              )}
+            </div>
           </div>
-
-          <p className="text-sm text-gray-600 whitespace-nowrap">
-            <strong>Mobile:</strong> {user?.mobile}
-          </p>
-          <p className="text-sm text-gray-600 whitespace-nowrap">
-            <strong>Room: </strong>
-            {user?.room_number}
-          </p>
-          {user.status === "Active" ? (
-            <p className="text-sm text-gray-600 whitespace-nowrap">
-              <strong>Check In Date: </strong>
-              {format(new Date(user?.start_date), "dd/MM/yyyy")}
-            </p>
-          ) : (
-            <p className="text-sm text-gray-600 whitespace-nowrap">
-              <strong>Status: </strong>
-              {user?.status}
-            </p>
-          )}
         </div>
       </div>
       <TenantEditDialog
@@ -136,6 +157,13 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
         isOpen={openViewDialog}
         onClose={handleCloseViewDialog}
       />
+      {user?.status === "Active" && (
+        <TenantPaymentEditDialog
+          uid={user.uid}
+          isOpen={openPaymentsDialog}
+          onClose={handleClosePaymentDialog}
+        />
+      )}
     </div>
   );
 };

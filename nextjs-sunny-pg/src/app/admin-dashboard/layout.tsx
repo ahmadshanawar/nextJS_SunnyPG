@@ -12,11 +12,6 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     {
-      name: "Dashboard",
-      path: "/admin-dashboard/admin-dash",
-      icon: <FaGaugeSimple className="mr-2" />,
-    },
-    {
       name: "Tenants",
       path: "/admin-dashboard/tennants",
       icon: <FaUsers className="mr-2" />,
@@ -25,6 +20,11 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
       name: "Occupancy",
       path: "/admin-dashboard/occupancy",
       icon: <FaBook className="mr-2" />,
+    },
+    {
+      name: "Dashboard",
+      path: "/admin-dashboard/admin-dash",
+      icon: <FaGaugeSimple className="mr-2" />,
     },
   ];
 

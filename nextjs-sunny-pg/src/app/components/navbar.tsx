@@ -68,6 +68,13 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLinkClick = (linkName: string) => {
+    if (userId && linkName === "Logout") {
+      handleLogout();
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="bg-white shadow-lg">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,9 +126,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link key={link.id} href={link.href}>
                 <div
-                  onClick={
-                    userId && link.name === "Logout" ? handleLogout : () => {}
-                  }
+                  onClick={() => handleLinkClick(link.name)}
                   className={clsx(
                     "text-gray-800 hover:text-black-500 transition duration-300 py-2 px-4 rounded-md",
                     {
@@ -146,6 +151,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link key={link.id} href={link.href}>
                 <div
+                  onClick={() => handleLinkClick(link.name)}
                   className={clsx(
                     "text-gray-800 hover:text-black-500 transition duration-300 py-2 px-4 rounded-md",
                     {

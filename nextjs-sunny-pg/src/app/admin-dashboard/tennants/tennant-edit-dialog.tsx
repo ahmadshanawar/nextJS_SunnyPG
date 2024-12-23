@@ -9,8 +9,9 @@ import { FaXmark } from "react-icons/fa6";
 import { isValid } from "@make-sense/adhaar-validator";
 import RoomDropdown from "./rooms_dropdown";
 import ConfirmationDialog from "@/app/components/confirmation-dialog";
-import { format } from "date-fns";
+import { addMonths, endOfDay, format } from "date-fns";
 import Loader from "react-js-loader";
+import useUserStore from "@/lib/store/userStore";
 
 type UserDetails = {
   uid: string;
@@ -51,6 +52,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   const [loading, setLoading] = useState<Boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isModified, setIsModified] = useState(false);
+  const { userId } = useUserStore();
 
   useEffect(() => {
     if (uid && isOpen) {
@@ -138,7 +140,28 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     }
     return { data: null, error: null };
   };
-
+  const handleInsertInitialPaymentRow = async () => {
+    if (
+      editedData &&
+      editedData.start_date &&
+      editedData.status === "Active" &&
+      editedData.room_number
+    ) {
+      const { error, data } = await supabase.from("Payments").insert({
+        uid: editedData.uid,
+        added_by: userId,
+        billing_start_date: editedData.start_date,
+        billing_end_date: format(
+          addMonths(new Date(editedData.start_date), 1),
+          "yyyy-MM-dd"
+        ),
+        amount: editedData.rent_amount,
+        paid: false,
+      });
+      return { data, error };
+    }
+    return { data: null, error: null };
+  };
   const handleSubmit = async () => {
     if (editedData) {
       if (!isValid(editedData.adhaar)) {
@@ -151,6 +174,19 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
         console.error("Error updating Tennants table:", updateResult.error);
       } else {
         console.log("Successfully updated Tennants table:", updateResult.data);
+      }
+
+      const initialPaymentRowAddResult = await handleInsertInitialPaymentRow();
+      if (initialPaymentRowAddResult.error) {
+        console.error(
+          "Error updating payments table:",
+          initialPaymentRowAddResult.error
+        );
+      } else {
+        console.log(
+          "Successfully inserted row payments table:",
+          initialPaymentRowAddResult.data
+        );
       }
 
       if (editedData.status === "Active") {
@@ -285,7 +321,8 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                       type="date"
                       name="start_date"
                       value={
-                        editedData?.start_date || format(new Date(), "yyyy-MM-dd")
+                        editedData?.start_date ||
+                        format(endOfDay(new Date()), "yyyy-MM-dd")
                       }
                       onChange={handleInputChange}
                       className="border rounded p-2 w-full"
@@ -422,9 +459,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
 
         <ConfirmationDialog
           isOpen={isDialogOpen}
-          message={`Do you want to mark this mobile number ${
-            tenantData?.mobile_verified ? "verified" : "unverified"
-          }?`}
+          message={`Do you want to change this mobile number status?`}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
         />

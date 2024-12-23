@@ -15,15 +15,12 @@ export default function Pricing() {
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
-        Choose an affordable plan that is packed with the best amenities and
-        comfort for your stay with us.
+        Choose an affordable plan that is packed with the best amenities and comfort
+        for your stay with us.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <div className="rounded-3xl rounded-t-3xl bg-white/60 p-8 ring-1 ring-gray-900/10 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
-          <h3
-            id="tier-hobby"
-            className="text-base/7 font-semibold text-indigo-600"
-          >
+          <h3 id="tier-hobby" className="text-base/7 font-semibold text-indigo-600">
             Private Room
           </h3>
           <p className="mt-4 flex items-baseline gap-x-2">
@@ -33,8 +30,8 @@ export default function Pricing() {
             <span className="text-base text-gray-500">/month</span>
           </p>
           <p className="mt-6 text-base/7 text-gray-600">
-            The perfect plan if you&#039;re just getting started with your stay
-            with us.
+            The perfect plan if you&#039;re just getting started with your stay with
+            us.
           </p>
           <ul
             role="list"
@@ -154,7 +151,7 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-hobby"
             className="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-purple-600 ring-1 ring-inset ring-purple-200 hover:ring-purple-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:mt-10"
           >
@@ -175,8 +172,8 @@ export default function Pricing() {
             <span className="text-base text-gray-400">/3 months</span>
           </p>
           <p className="mt-6 text-base/7 text-gray-300">
-            Dedicated plan if you wish to continue your stay with us. Avail
-            Special Discounts when selecting this plan
+            Dedicated plan if you wish to continue your stay with us. Avail Special
+            Discounts when selecting this plan
           </p>
           <ul
             role="list"
@@ -312,7 +309,7 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-enterprise"
             className="mt-8 block rounded-md bg-purple-700 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-700 sm:mt-10"
           >
@@ -323,11 +320,8 @@ export default function Pricing() {
       {/* { Next Section} */}
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <div className="rounded-3xl rounded-t-3xl bg-white/60 p-8 ring-1 ring-gray-900/10 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
-          <h3
-            id="tier-hobby"
-            className="text-base/7 font-semibold text-indigo-600"
-          >
-           Double Sharing Room
+          <h3 id="tier-hobby" className="text-base/7 font-semibold text-indigo-600">
+            Double Sharing Room
           </h3>
           <p className="mt-4 flex items-baseline gap-x-2">
             <span className="text-5xl font-semibold tracking-tight text-gray-900">
@@ -336,8 +330,8 @@ export default function Pricing() {
             <span className="text-base text-gray-500">/month</span>
           </p>
           <p className="mt-6 text-base/7 text-gray-600">
-            The perfect plan if you&#039;re just getting started with your stay
-            with us.
+            The perfect plan if you&#039;re just getting started with your stay with
+            us.
           </p>
           <ul
             role="list"
@@ -457,7 +451,7 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-hobby"
             className="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-purple-600 ring-1 ring-inset ring-purple-200 hover:ring-purple-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:mt-10"
           >
@@ -478,8 +472,8 @@ export default function Pricing() {
             <span className="text-base text-gray-400">/3 months</span>
           </p>
           <p className="mt-6 text-base/7 text-gray-300">
-            Dedicated plan if you wish to continue your stay with us. Avail
-            Special Discounts when selecting this plan
+            Dedicated plan if you wish to continue your stay with us. Avail Special
+            Discounts when selecting this plan
           </p>
           <ul
             role="list"
@@ -615,9 +609,9 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-enterprise"
-           className="mt-8 block rounded-md bg-purple-700 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-700 sm:mt-10"
+            className="mt-8 block rounded-md bg-purple-700 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-700 sm:mt-10"
           >
             Book Your Room Now
           </a>
@@ -626,11 +620,8 @@ export default function Pricing() {
       {/* { Next Section} */}
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <div className="rounded-3xl rounded-t-3xl bg-white/60 p-8 ring-1 ring-gray-900/10 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
-          <h3
-            id="tier-hobby"
-            className="text-base/7 font-semibold text-indigo-600"
-          >
-           Triple Sharing Room
+          <h3 id="tier-hobby" className="text-base/7 font-semibold text-indigo-600">
+            Triple Sharing Room
           </h3>
           <p className="mt-4 flex items-baseline gap-x-2">
             <span className="text-5xl font-semibold tracking-tight text-gray-900">
@@ -639,8 +630,8 @@ export default function Pricing() {
             <span className="text-base text-gray-500">/month</span>
           </p>
           <p className="mt-6 text-base/7 text-gray-600">
-            The perfect plan if you&#039;re just getting started with your stay
-            with us.
+            The perfect plan if you&#039;re just getting started with your stay with
+            us.
           </p>
           <ul
             role="list"
@@ -760,7 +751,7 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-hobby"
             className="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-purple-800 ring-1 ring-inset ring-purple-200 hover:ring-purple-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:mt-10"
           >
@@ -917,7 +908,7 @@ export default function Pricing() {
             </li>
           </ul>
           <a
-            href="#"
+            href="/signup"
             aria-describedby="tier-enterprise"
             className="mt-8 block rounded-md bg-purple-700 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-700 sm:mt-10"
           >

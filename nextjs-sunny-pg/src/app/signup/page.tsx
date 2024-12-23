@@ -69,7 +69,11 @@ const SignUpForm: React.FC = () => {
 
   const validateForm = (): Errors => {
     const newErrors: Errors = {};
-    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.name)) {
+      newErrors.name = "Name must only contain letters and spaces";
+    }
     if (!formData.mobile || formData.mobile.length !== 10)
       newErrors.mobile = "Mobile number must be 10 digits";
     if (!formData.addhar || formData.addhar.length !== 12)
@@ -96,7 +100,6 @@ const SignUpForm: React.FC = () => {
           email: formData.email,
           status: "Pending",
           mobile_verified: false,
-          passCode: formData.password,
           termsAndCondition: formData.termsAccepted,
           occupation: formData.occupation,
           institution: formData.institution,
@@ -163,6 +166,7 @@ const SignUpForm: React.FC = () => {
           <input
             type="text"
             name="name"
+            maxLength={50}
             value={formData.name}
             onChange={handleChange}
             className="p-3 pl-10 w-full rounded-md border border-gray-300"

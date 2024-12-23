@@ -10,6 +10,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [forgotPasswordError, setForgotPasswordError] = useState("");
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState("");
   const router = useRouter();
   const { setUserId } = useUserStore();
 
@@ -25,6 +29,7 @@ export default function Login() {
       return error;
     }
   }
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (email === "" || password === "") {
@@ -39,6 +44,26 @@ export default function Login() {
         if (error) console.log(error);
       } else {
         setError("Invalid Username or Password");
+      }
+    }
+  };
+
+  const handleForgotPassword = async (e: any) => {
+    e.preventDefault();
+    if (forgotPasswordEmail === "") {
+      setForgotPasswordError("Please enter your email address");
+    } else {
+      setForgotPasswordError("");
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        forgotPasswordEmail,
+        {
+          redirectTo: "http://localhost:3000/login/reset-password",
+        }
+      );
+      if (error) {
+        setForgotPasswordError("Error sending password reset email");
+      } else {
+        setForgotPasswordSuccess("Password reset email sent successfully");
       }
     }
   };
@@ -100,9 +125,12 @@ export default function Login() {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <a href="#" className="text-purple-800 text-sm hover:underline">
+          <button
+            onClick={() => setIsForgotPasswordOpen(true)}
+            className="text-purple-800 text-sm hover:underline"
+          >
             Forgot Password?
-          </a>
+          </button>
         </div>
         <div className="mt-2 text-center">
           <span className="text-sm">Don't have an account? </span>
@@ -114,6 +142,67 @@ export default function Login() {
           </Link>
         </div>
       </div>
+
+      {isForgotPasswordOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Forgot Password
+            </h3>
+            <div className="mt-2">
+              <p className="text-sm text-gray-500">
+                Enter your email address and we will send you a link to reset your
+                password.
+              </p>
+            </div>
+            <form onSubmit={handleForgotPassword}>
+              <div className="mt-4">
+                <label
+                  htmlFor="forgotPasswordEmail"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="forgotPasswordEmail"
+                  name="forgotPasswordEmail"
+                  value={forgotPasswordEmail}
+                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+                />
+              </div>
+              {forgotPasswordError && (
+                <div className="mt-2 text-sm text-red-600">
+                  {forgotPasswordError}
+                </div>
+              )}
+              {forgotPasswordSuccess && (
+                <div className="mt-2 text-sm text-green-600">
+                  {forgotPasswordSuccess}
+                </div>
+              )}
+              <div className="mt-4">
+                <button
+                  type="submit"
+                  className="w-full py-2 px-4 bg-purple-800 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                >
+                  Send Reset Link
+                </button>
+              </div>
+            </form>
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setIsForgotPasswordOpen(false)}
+                className="text-gray-500 text-sm hover:underline"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

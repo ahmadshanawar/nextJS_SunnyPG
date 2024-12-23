@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export default function AdminUserDashboard() {
   const router = useRouter();
   useEffect(() => {
-    router.push("/admin-dashboard/admin-dash");
+    router.push("/admin-dashboard/tennants");
   }, []);
   return <div></div>;
 }

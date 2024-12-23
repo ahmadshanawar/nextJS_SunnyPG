@@ -206,219 +206,225 @@ const Profile = () => {
           />
         </div>
       ) : (
-        <div className="bg-white flex flex-col items-center justify-center p-4">
-          {/* Avatar */}
-          <div className="text-center border-2 rounded-lg px-3 py-1 mb-4">
-            <span className="text-md ">
-              Status: <strong className="text-md">{status}</strong>
-            </span>
-          </div>
-          <div className="items-center justify-center">
-            {isLoadingPhoto ? (
-              <div
-                role="status"
-                className="flex items-center justify-center h-[70vh]"
-              >
-                <Loader
-                  type="hourglass"
-                  bgColor={"#7c3ab3"}
-                  color={"#828282"}
-                  title={"Loading..."}
-                  size={60}
-                />
-              </div>
-            ) : (
-              <div className="relative">
-                <Image
-                  key={userData.email}
-                  height="64"
-                  width="64"
-                  src={userData?.profile_photo || User}
-                  alt={`Profile-${userData?.profile_photo}`}
-                  unoptimized
-                  priority
-                  className="w-32 h-32 shadow-lg rounded-full object-cover ml-1 my-2"
-                />
-                <StatusIndicator status={status} />
-              </div>
-            )}
-          </div>
-          <div className="mt-3 text-center">
-            <p className="text-gray-700 font-semibold">{userData.occupation}</p>
-            <p className="text-lg font-bold text-gray-600">{userData.institution}</p>
-          </div>
-          <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-            <button
-              onClick={handleClick}
-              className="my-4 bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded disabled:opacity-50"
-              disabled={isLoadingPhoto}
-            >
-              Change Profile Picture
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              ref={fileInputRef}
-              className="hidden"
-            />
-          </div>
-
-          {/* Error / Success Message */}
-          {message && (
-            <div
-              className={`mt-4 px-5 rounded text-white ${
-                isSuccess ? "bg-green-400" : "bg-red-600"
-              }`}
-            >
-              {message}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">User Profile</h2>
+          <hr className="my-3" />
+          <div className="bg-white flex flex-col items-center justify-center p-4">
+            {/* Avatar */}
+            <div className="text-center border-2 rounded-lg px-3 py-1 mb-4">
+              <span className="text-md ">
+                Status: <strong className="text-md">{status}</strong>
+              </span>
             </div>
-          )}
-
-          {/* Editable Form */}
-          <div className="mt-2 w-full">
-            {isEditing ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={userData.name}
-                      onChange={handleInputChange}
-                      maxLength={80}
-                      placeholder="Name"
-                      className="p-3 border rounded w-full"
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm">{errors.name}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="mobile"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Mobile
-                    </label>
-                    <input
-                      type="text"
-                      id="mobile"
-                      name="mobile"
-                      maxLength={10}
-                      value={userData.mobile}
-                      onChange={handleInputChange}
-                      placeholder="Mobile"
-                      className="p-3 border rounded w-full"
-                    />
-                    {errors.mobile && (
-                      <p className="text-red-500 text-sm">{errors.mobile}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="occupation"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Occupation
-                    </label>
-                    <input
-                      type="text"
-                      id="occupation"
-                      name="occupation"
-                      value={userData.occupation}
-                      onChange={handleInputChange}
-                      maxLength={80}
-                      placeholder="Occupation"
-                      className="p-3 border rounded w-full"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="institution"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Institution
-                    </label>
-                    <input
-                      type="text"
-                      id="institution"
-                      name="institution"
-                      value={userData.institution}
-                      onChange={handleInputChange}
-                      placeholder="Institution"
-                      maxLength={100}
-                      className="p-3 border rounded w-full"
-                    />
-                    {errors.institution && (
-                      <p className="text-red-500 text-sm">{errors.institution}</p>
-                    )}
-                  </div>
+            <div className="items-center justify-center">
+              {isLoadingPhoto ? (
+                <div
+                  role="status"
+                  className="flex items-center justify-center h-[70vh]"
+                >
+                  <Loader
+                    type="hourglass"
+                    bgColor={"#7c3ab3"}
+                    color={"#828282"}
+                    title={"Loading..."}
+                    size={60}
+                  />
                 </div>
-              </>
-            ) : (
-              <ul className="space-y-2 text-gray-800">
-                <hr />
-                <li className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">Name:</span>
-                  <span className="text-gray-600">{userData.name}</span>
-                </li>
-                <hr />
-                <li className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">Mobile:</span>
-                  <span className="text-gray-600">{userData.mobile}</span>
-                </li>
-                <hr />
-                <li className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">Aadhaar:</span>
-                  <span className="text-gray-600">{userData.adhaar}</span>
-                </li>
-                <hr />
-                <li className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">Email:</span>
-                  <span className="text-gray-600">{userData.email}</span>
-                </li>
-                <hr />
-              </ul>
+              ) : (
+                <div className="relative">
+                  <Image
+                    key={userData.email}
+                    height="64"
+                    width="64"
+                    src={userData?.profile_photo || User}
+                    alt={`Profile-${userData?.profile_photo}`}
+                    unoptimized
+                    priority
+                    className="w-32 h-32 shadow-lg rounded-full object-cover ml-1 my-2"
+                  />
+                  <StatusIndicator status={status} />
+                </div>
+              )}
+            </div>
+            <div className="mt-3 text-center">
+              <p className="text-gray-700 font-semibold">{userData.occupation}</p>
+              <p className="text-lg font-bold text-gray-600">
+                {userData.institution}
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+              <button
+                onClick={handleClick}
+                className="my-4 bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded disabled:opacity-50"
+                disabled={isLoadingPhoto}
+              >
+                Change Profile Picture
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                ref={fileInputRef}
+                className="hidden"
+              />
+            </div>
+
+            {/* Error / Success Message */}
+            {message && (
+              <div
+                className={`mt-4 px-5 rounded text-white ${
+                  isSuccess ? "bg-green-400" : "bg-red-600"
+                }`}
+              >
+                {message}
+              </div>
             )}
 
-            <div className="flex justify-end">
-              {isEditing && (
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="mt-8 mx-2 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
+            {/* Editable Form */}
+            <div className="mt-2 w-full">
+              {isEditing ? (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={userData.name}
+                        onChange={handleInputChange}
+                        maxLength={80}
+                        placeholder="Name"
+                        className="p-3 border rounded w-full"
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm">{errors.name}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="mobile"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Mobile
+                      </label>
+                      <input
+                        type="text"
+                        id="mobile"
+                        name="mobile"
+                        maxLength={10}
+                        value={userData.mobile}
+                        onChange={handleInputChange}
+                        placeholder="Mobile"
+                        className="p-3 border rounded w-full"
+                      />
+                      {errors.mobile && (
+                        <p className="text-red-500 text-sm">{errors.mobile}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="occupation"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Occupation
+                      </label>
+                      <input
+                        type="text"
+                        id="occupation"
+                        name="occupation"
+                        value={userData.occupation}
+                        onChange={handleInputChange}
+                        maxLength={80}
+                        placeholder="Occupation"
+                        className="p-3 border rounded w-full"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="institution"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Institution
+                      </label>
+                      <input
+                        type="text"
+                        id="institution"
+                        name="institution"
+                        value={userData.institution}
+                        onChange={handleInputChange}
+                        placeholder="Institution"
+                        maxLength={100}
+                        className="p-3 border rounded w-full"
+                      />
+                      {errors.institution && (
+                        <p className="text-red-500 text-sm">{errors.institution}</p>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <ul className="space-y-2 text-gray-800">
+                  <hr />
+                  <li className="flex justify-between items-center">
+                    <span className="font-semibold text-lg">Name:</span>
+                    <span className="text-gray-600">{userData.name}</span>
+                  </li>
+                  <hr />
+                  <li className="flex justify-between items-center">
+                    <span className="font-semibold text-lg">Mobile:</span>
+                    <span className="text-gray-600">{userData.mobile}</span>
+                  </li>
+                  <hr />
+                  <li className="flex justify-between items-center">
+                    <span className="font-semibold text-lg">Aadhaar:</span>
+                    <span className="text-gray-600">{userData.adhaar}</span>
+                  </li>
+                  <hr />
+                  <li className="flex justify-between items-center">
+                    <span className="font-semibold text-lg">Email:</span>
+                    <span className="text-gray-600">{userData.email}</span>
+                  </li>
+                  <hr />
+                </ul>
               )}
-              {!isEditing && status === "Pending" && (
-                <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="mt-8 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-                >
-                  Edit Profile
-                </button>
-              )}
-              {isEditing && (
-                <button
-                  onClick={handleSave}
-                  className="mt-8 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
-                  disabled={isLoadingSave}
-                >
-                  {isLoadingSave ? (
-                    <div className="animate-spin w-6 h-6 border-4 border-t-4 border-white rounded-full"></div>
-                  ) : (
-                    "Save"
-                  )}
-                </button>
-              )}
+
+              <div className="flex justify-end">
+                {isEditing && (
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="mt-8 mx-2 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                )}
+                {!isEditing && status === "Pending" && (
+                  <button
+                    onClick={() => setIsEditing(!isEditing)}
+                    className="mt-8 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
+                  >
+                    Edit Profile
+                  </button>
+                )}
+                {isEditing && (
+                  <button
+                    onClick={handleSave}
+                    className="mt-8 bg-purple-800 hover:bg-purple-700 text-white px-4 py-2 rounded"
+                    disabled={isLoadingSave}
+                  >
+                    {isLoadingSave ? (
+                      <div className="animate-spin w-6 h-6 border-4 border-t-4 border-white rounded-full"></div>
+                    ) : (
+                      "Save"
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

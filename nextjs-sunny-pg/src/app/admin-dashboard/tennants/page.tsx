@@ -29,9 +29,11 @@ type UserDetails = {
 
 export default function Tennants() {
   const [users, setUsers] = useState<UserDetails[]>([]);
-  const [selectedUserType, setSelectedUserType] = useState("Pending");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedUserType, setSelectedUserType] = useState("Active");
   async function getUsers() {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from("Tennants")
         .select(`*,PhotoIds(*)`)
@@ -39,12 +41,17 @@ export default function Tennants() {
         .eq("status", selectedUserType)
         .order("room_number", { ascending: true });
 
-      if (error) console.log(error);
+      if (error) {
+        console.log(error);
+        setLoading(false);
+      }
       if (data) {
         setUsers(data);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
 
@@ -58,7 +65,7 @@ export default function Tennants() {
 
   return (
     <>
-      <div className="mt-4 mx-2 w-[95vw] z-40">
+      <div className="mt-4 mx-2 w-[95vw] z-20">
         <div className="flex justify-between">
           <div className="my-2 ml-5 text-bold text-xl text-gray-800"></div>
           <div className="flex justify-end items-center">
@@ -89,8 +96,10 @@ export default function Tennants() {
         </div>
         <hr className="h-px my-2 bg-gray-200 border-0" />
       </div>
-
-      {users?.length > 0 ? (
+      {users?.length === 0 && !loading && (
+        <div className="text-center my-5">No Users Found</div>
+      )}
+      {!loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4 mx-5">
           {users?.map((user: UserDetails) => {
             return (
