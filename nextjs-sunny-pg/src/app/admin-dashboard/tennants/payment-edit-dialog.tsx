@@ -119,7 +119,8 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
       payment.billing_start_date &&
       payment.billing_end_date &&
       payment.amount > 0 &&
-      payment.paid !== false
+      payment.paid !== false &&
+      new Date(payment.billing_start_date) < new Date(payment.billing_end_date)
     );
   };
 
@@ -151,10 +152,10 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                   <thead>
                     <tr>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Billing Start Date
+                        Billing Start Date (MM/DD/YYYY)
                       </th>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Billing End Date
+                        Billing End Date (MM/DD/YYYY)
                       </th>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amount(₹)

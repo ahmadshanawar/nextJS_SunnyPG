@@ -82,7 +82,13 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
         if (currentPayment) {
           setRentStatus(currentPayment.paid ? "Paid" : "Pending");
           setBillingPeriod(
-            `${currentPayment.billing_start_date} - ${currentPayment.billing_end_date}`
+            `${format(
+              parseISO(currentPayment.billing_start_date),
+              "dd-MM-yyyy"
+            )} <-> ${format(
+              parseISO(currentPayment.billing_end_date),
+              "dd-MM-yyyy"
+            )}`
           );
         }
       }

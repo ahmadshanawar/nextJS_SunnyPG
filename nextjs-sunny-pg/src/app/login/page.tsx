@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HiUser } from "react-icons/hi"; // User icon from react-icons
+import { FaSpinner } from "react-icons/fa"; // Spinner icon from react-icons
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ export default function Login() {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [forgotPasswordError, setForgotPasswordError] = useState("");
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { setUserId } = useUserStore();
 
@@ -36,7 +38,9 @@ export default function Login() {
       setError("Please fill in all fields");
     } else {
       setError("");
+      setIsLoading(true);
       const res: any = await signInWithEmail(email, password);
+      setIsLoading(false);
       if (res?.user) {
         localStorage.setItem("supabaseSession", JSON.stringify(res?.session));
         setUserId(res?.user?.id);
@@ -120,7 +124,9 @@ export default function Login() {
           <button
             type="submit"
             className="w-full py-2 px-4 bg-purple-800 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600"
+            disabled={isLoading}
           >
+            {isLoading ? <FaSpinner className="animate-spin inline mr-2" /> : null}
             Login
           </button>
         </form>
