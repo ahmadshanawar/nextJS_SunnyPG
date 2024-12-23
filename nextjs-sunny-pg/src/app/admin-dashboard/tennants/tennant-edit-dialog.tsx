@@ -236,7 +236,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   return (
     isOpen && (
       <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-xl max-w-xl w-full overflow-auto h-auto max-h-[75vh]">
+        <div className="bg-white p-6 rounded-lg shadow-xl max-w-xl w-full overflow-auto max-h-[75vh]">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold">Edit Tenant Details</h3>
             <FaXmark
