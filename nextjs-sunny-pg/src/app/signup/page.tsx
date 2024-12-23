@@ -69,11 +69,7 @@ const SignUpForm: React.FC = () => {
 
   const validateForm = (): Errors => {
     const newErrors: Errors = {};
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-    } else if (!/^[a-zA-Z\s]+$/.test(formData.name)) {
-      newErrors.name = "Name must only contain letters and spaces";
-    }
+    if (!formData.name) newErrors.name = "Name is required";
     if (!formData.mobile || formData.mobile.length !== 10)
       newErrors.mobile = "Mobile number must be 10 digits";
     if (!formData.addhar || formData.addhar.length !== 12)
@@ -81,6 +77,8 @@ const SignUpForm: React.FC = () => {
     if (!isValid(formData.addhar)) newErrors.addhar = "Aadhaar number must be valid";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
     if (!formData.termsAccepted)

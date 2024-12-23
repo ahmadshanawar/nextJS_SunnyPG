@@ -9,8 +9,8 @@ export const LandingPage = () => {
     <div className="container mx-auto px-4 lg:px-8">
       <div className="flex flex-wrap items-center">
         {/* Left Section: Text */}
-        <div className="w-full lg:w-2/3 mb-1 lg:mb-0">
-          <div className="max-w-2xl">
+        <div className="mt-8 w-full lg:w-2/3 mb-1 lg:mb-0">
+          <div className="ml-8 max-w-3xl">
             <h1 className="text-4xl font-bold leading-snug tracking-tight text-gray-800 lg:text-4xl xl:text-5xl dark:text-purple-800">
               Stay in Peace,
             </h1>
@@ -34,13 +34,16 @@ export const LandingPage = () => {
           </div>
         </div>
         {/* Right Section: Image */}
-        <div className="w-full lg:w-1/3 flex lg:justify-end">
+        <div className="hidden lg:flex w-full lg:w-1/3 lg:justify-end">
           <div className="w-full sm:w-[80%] lg:w-[90%]">
             <Login />
           </div>
         </div>
       </div>
       <Features />
+      <div className="lg:hidden mt-4">
+        <Login />
+      </div>
       <hr className="my-5" />
       <footer className="relative footer footer-center bg-base-300 text-base-content p-4 text-center my-5">
         <aside>

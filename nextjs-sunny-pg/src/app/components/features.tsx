@@ -41,7 +41,7 @@ export default function Features() {
         className="w-full"
       >
         {featuresData.map((feature: any, index: number) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide key={index} className="ml-9">
             <FeatureCard
               title={feature.title}
               subtext={feature.subtext}
