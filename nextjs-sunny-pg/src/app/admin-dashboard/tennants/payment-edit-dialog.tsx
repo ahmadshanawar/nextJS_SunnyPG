@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import { differenceInDays, addMonths, format, parseISO } from "date-fns";
 import Loader from "react-js-loader";
-import { FaXmark, FaTrash, FaFloppyDisk } from "react-icons/fa6";
+import { FaXmark, FaTrash, FaFloppyDisk, FaSpinner } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
 
 interface TenantPaymentEditDialogProps {
@@ -28,6 +28,8 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
   const [paymentData, setPaymentData] = useState<PaymentDetails[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
   const [editedRows, setEditedRows] = useState<{ [key: string]: boolean }>({});
+  const [loadingSave, setLoadingSave] = useState<{ [key: string]: boolean }>({});
+  const [loadingDelete, setLoadingDelete] = useState<{ [key: string]: boolean }>({});
 
   const fetchData = async () => {
     setLoading(true);
@@ -59,6 +61,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
   };
 
   const handleSave = async (pay_id: string) => {
+    setLoadingSave((prev) => ({ ...prev, [pay_id]: true }));
     const row = paymentData.find((payment) => payment.pay_id === pay_id);
     if (row) {
       const updatedRow = { ...row, paid_on: format(new Date(), "yyyy-MM-dd"), uid };
@@ -94,9 +97,11 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
         }
       }
     }
+    setLoadingSave((prev) => ({ ...prev, [pay_id]: false }));
   };
 
   const handleDelete = async (pay_id: string) => {
+    setLoadingDelete((prev) => ({ ...prev, [pay_id]: true }));
     if (window.confirm("Are you sure you want to delete this payment?")) {
       const { error } = await supabase
         .from("Payments")
@@ -112,6 +117,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
         setPaymentData(updatedData);
       }
     }
+    setLoadingDelete((prev) => ({ ...prev, [pay_id]: false }));
   };
 
   const isRowValid = (payment: PaymentDetails) => {
@@ -260,19 +266,25 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                                   !editedRows[payment.pay_id] || !isRowValid(payment)
                                 }
                               >
-                                <FaFloppyDisk className="text-2xl" />
+                                {loadingSave[payment.pay_id] ? (
+                                  <FaSpinner className="animate-spin text-2xl" />
+                                ) : (
+                                  <FaFloppyDisk className="text-2xl" />
+                                )}
                               </button>
-                              <button
-                                disabled={paymentData.length === 1}
-                                onClick={() => handleDelete(payment.pay_id)}
-                                className={
-                                  paymentData.length === 1
-                                    ? "text-gray-500 ml-2"
-                                    : `text-red-500 hover:text-red-700 ml-2`
-                                }
-                              >
-                                <FaTrash className="text-xl" />
-                              </button>
+                              {paymentData.length > 1 && (
+                                <button
+                                  onClick={() => handleDelete(payment.pay_id)}
+                                  className="text-red-500 hover:text-red-700 ml-2"
+                                  disabled={loadingDelete[payment.pay_id]}
+                                >
+                                  {loadingDelete[payment.pay_id] ? (
+                                    <FaSpinner className="animate-spin text-xl" />
+                                  ) : (
+                                    <FaTrash className="text-xl" />
+                                  )}
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>

@@ -125,10 +125,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   };
   return (
     <div className="my-2 mx-2">
-      <div
-        className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden"
-        onClick={handleViewDialogClick}
-      >
+      <div className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden">
         {/* Image Section */}
         <div className="flex items-start items-center">
           <div className="relative w-16 h-16">
@@ -139,6 +136,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
                 width={256}
                 height={256}
                 className="object-cover aspect-square"
+                onClick={handleViewDialogClick}
               />
             </div>
             <StatusIndicator status={user?.status} />
@@ -148,6 +146,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
             <div className="flex justify-between items-center">
               {/* Name aligned to the left */}
               <h2 className="text-sm font-bold text-gray-800">{user?.name}</h2>
+              <p>{user.uid}</p>
               {/* Icons aligned to the right */}
               <div className="flex space-x-1 items-center">
                 {user?.status === "Active" && (
