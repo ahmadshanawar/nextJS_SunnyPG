@@ -131,6 +131,7 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
           <div className="relative w-16 h-16">
             <div className="w-full h-full rounded-full overflow-hidden">
               <Image
+                onClick={handleViewDialogClick}
                 src={user?.PhotoIds?.profileUrl || User}
                 alt={`Profile of ${user?.name}`}
                 width={256}
