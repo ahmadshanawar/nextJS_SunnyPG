@@ -137,7 +137,6 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
                 width={256}
                 height={256}
                 className="object-cover aspect-square"
-                onClick={handleViewDialogClick}
               />
             </div>
             <StatusIndicator status={user?.status} />
