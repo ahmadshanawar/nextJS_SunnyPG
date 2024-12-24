@@ -5,11 +5,16 @@ import User from "../../../../public/images/user.png";
 import clsx from "clsx";
 import { FaPen, FaRupeeSign } from "react-icons/fa";
 import TenantEditDialog from "./tennant-edit-dialog";
-import { useState, useEffect } from "react";
-import { format, parseISO, isWithinInterval } from "date-fns";
+import { useState } from "react";
+import { format } from "date-fns";
 import TennatViewDialog from "./tennant-view-dialog";
 import TenantPaymentEditDialog from "./payment-edit-dialog";
-import { supabase } from "@/lib/supabase";
+
+type PaymentDetails = {
+  billing_start_date: string;
+  billing_end_date: string;
+  paid: boolean;
+};
 
 type UserDetails = {
   uid: string;
@@ -30,6 +35,7 @@ type UserDetails = {
     adhaarBackUrl: string;
     otherIdUrl: string;
   };
+  Payments: PaymentDetails[];
 };
 
 type TennantCardProps = {
@@ -58,44 +64,6 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openViewDialog, setOpenViewDialog] = useState<boolean>(false);
   const [openPaymentsDialog, setOpenPaymentDialog] = useState<boolean>(false);
-  const [rentStatus, setRentStatus] = useState<string>("Pending");
-  const [billingPeriod, setBillingPeriod] = useState<string>("");
-
-  useEffect(() => {
-    const fetchRentStatus = async () => {
-      const { data, error } = await supabase
-        .from("Payments")
-        .select("*")
-        .eq("uid", user.uid);
-
-      if (error) {
-        console.error("Error fetching payment data:", error);
-      } else {
-        const today = new Date();
-        const currentPayment = data.find((payment: any) =>
-          isWithinInterval(today, {
-            start: parseISO(payment.billing_start_date),
-            end: parseISO(payment.billing_end_date),
-          })
-        );
-
-        if (currentPayment) {
-          setRentStatus(currentPayment.paid ? "Paid" : "Pending");
-          setBillingPeriod(
-            `${format(
-              parseISO(currentPayment.billing_start_date),
-              "dd-MM-yyyy"
-            )} <-> ${format(
-              parseISO(currentPayment.billing_end_date),
-              "dd-MM-yyyy"
-            )}`
-          );
-        }
-      }
-    };
-
-    fetchRentStatus();
-  }, [user.uid]);
 
   const handleEditDialogClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -123,6 +91,27 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
   const handleCloseViewDialog = () => {
     setOpenViewDialog(false);
   };
+
+  const currentPayment = user.Payments.find((payment) => {
+    const today = new Date();
+    return (
+      new Date(payment.billing_start_date) <= today &&
+      today <= new Date(payment.billing_end_date)
+    );
+  });
+
+  const rentStatus = currentPayment
+    ? currentPayment.paid
+      ? "Paid"
+      : "Pending"
+    : "Pending";
+  const billingPeriod = currentPayment
+    ? `${format(
+        new Date(currentPayment.billing_start_date),
+        "dd-MM-yyyy"
+      )} <-> ${format(new Date(currentPayment.billing_end_date), "dd-MM-yyyy")}`
+    : "";
+
   return (
     <div className="my-2 mx-2">
       <div className="p-2 h-[150px] bg-white rounded-lg shadow-xl hover:shadow-2xl cursor-pointer transform transition-transform duration-300 hover:scale-105 overflow-hidden">

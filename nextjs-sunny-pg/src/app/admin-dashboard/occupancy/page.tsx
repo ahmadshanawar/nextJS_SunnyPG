@@ -26,6 +26,7 @@ const RoomBoxContainer = () => {
   // Fetch Occupancy and Tennant Data
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const { data: occupancyData, error: occupancyError } = await supabase
         .from("Occupancy")
         .select("*");
@@ -47,9 +48,8 @@ const RoomBoxContainer = () => {
       setLoading(false); // Set loading to false after both data sets are fetched
     };
     fetchData();
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once
 
-  // Handle max_tennant update
   // Handle max_tennant update
   const handleUpdateMaxTenant = async (roomId: number) => {
     if (newMaxTenant === null || newMaxTenant < 1 || newMaxTenant > 4) {

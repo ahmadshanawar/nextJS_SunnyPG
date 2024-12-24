@@ -5,6 +5,12 @@ import { useEffect, useState } from "react";
 import { FaUsers } from "react-icons/fa";
 import Loader from "react-js-loader";
 
+type PaymentDetails = {
+  billing_start_date: string;
+  billing_end_date: string;
+  paid: boolean;
+};
+
 type UserDetails = {
   uid: string;
   name: string;
@@ -25,6 +31,7 @@ type UserDetails = {
     adhaarBackUrl: string;
     otherIdUrl: string;
   };
+  Payments: PaymentDetails[];
 };
 
 export default function Tennants() {
@@ -36,7 +43,7 @@ export default function Tennants() {
       setLoading(true);
       const { data, error } = await supabase
         .from("Tennants")
-        .select(`*,PhotoIds(*)`)
+        .select(`*,PhotoIds(*),Payments(*)`)
         .eq("role", "user")
         .eq("status", selectedUserType)
         .order("room_number", { ascending: true });
