@@ -40,7 +40,7 @@ export const uploadPhoto = async (
 ) => {
   const fileName = `${userId}-${type} -${file.name}`;
   const filePath = `${pathName}${fileName}`;
-  if (file.size > 150 * 1024) {
+  if (file.size > 250 * 1024) {
     alert("File size is large! Please select photo with smaller file size");
     return null;
   }

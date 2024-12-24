@@ -258,7 +258,7 @@ const Profile = () => {
                 className="my-4 bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded disabled:opacity-50"
                 disabled={isLoadingPhoto}
               >
-                Change Profile Picture
+                Edit Profile Picture
               </button>
               <input
                 type="file"

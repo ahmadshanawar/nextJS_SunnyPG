@@ -121,13 +121,13 @@ const SignUpForm: React.FC = () => {
         password,
       });
       if (error) {
-        setRegistrationErrors(error);
+        return { data: null, error };
       }
       if (dataUser) {
-        return dataUser;
+        return { data: dataUser, error: null };
       }
     } catch (error) {
-      setRegistrationErrors(error);
+      return { data: null, error };
     }
   }
   const handleSubmit = async (e: FormEvent) => {
@@ -138,9 +138,18 @@ const SignUpForm: React.FC = () => {
       setErrors(validationErrors);
       setIsSubmitting(false);
     } else {
-      const res: any = await signUpNewUser(formData.email, formData.password);
-      if (res) {
-        signUpUserDetails(res?.user?.id, formData);
+      const { data, error }: any = await signUpNewUser(
+        formData.email,
+        formData.password
+      );
+      if (error) {
+        debugger;
+        setRegistrationErrors(error);
+        setIsSubmitting(false);
+      }
+      if (data) {
+        signUpUserDetails(data?.user?.id, formData);
+        alert("User Registered Successfully! Please Login to continue");
         router.push("/login");
       }
       setIsSubmitting(false);
@@ -152,7 +161,6 @@ const SignUpForm: React.FC = () => {
       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
         Registration Form
       </h2>
-      {registrationErrors && <p className="text-red"></p>}
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 gap-6 md:grid-cols-2"
@@ -312,6 +320,14 @@ const SignUpForm: React.FC = () => {
 
         {/* Submit Button */}
         <div className="col-span-1 md:col-span-2">
+          {registrationErrors && (
+            <div
+              className="p-4 mb-4 text-sm text-red-600 rounded-lg bg-red-50"
+              role="alert"
+            >
+              <span className="font-medium">{registrationErrors.message}</span>
+            </div>
+          )}
           <button
             type="submit"
             disabled={isSubmitting || !formData.termsAccepted}

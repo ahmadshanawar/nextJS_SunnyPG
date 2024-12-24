@@ -6,7 +6,7 @@ import useUserStore from "@/lib/store/userStore";
 import Loader from "react-js-loader";
 import ViewPayments from "./view-payments";
 const UserDashboard: React.FC = () => {
-  const { userId } = useUserStore();
+  const { userId, status } = useUserStore();
   return (
     <>
       {userId ? (
@@ -20,9 +20,11 @@ const UserDashboard: React.FC = () => {
           </div>
 
           {/* Right Section */}
-          <div className="w-full md:w-3/7 flex justify-center">
-            <ViewPayments uid={userId} />
-          </div>
+          {status === "Active" && (
+            <div className="w-full md:w-3/7 flex justify-center">
+              <ViewPayments uid={userId} />
+            </div>
+          )}
         </div>
       ) : (
         <div role="status" className="flex items-center justify-center h-[70vh]">

@@ -96,7 +96,6 @@ export default function Login() {
             </label>
             <input
               type="email"
-              id="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -113,7 +112,6 @@ export default function Login() {
             </label>
             <input
               type="password"
-              id="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

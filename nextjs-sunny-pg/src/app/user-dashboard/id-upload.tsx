@@ -4,7 +4,7 @@ import { uploadPhoto } from "./helpers/helper";
 import Image from "next/image";
 import useUserStore from "@/lib/store/userStore";
 import { supabase } from "@/lib/supabase";
-import User from "../../../public/images/user.png";
+import IdCard from "../../../public/images/id-card.png";
 import { compressImage } from "./helpers/compressImage";
 import Loader from "react-js-loader";
 
@@ -112,7 +112,7 @@ const IdUpload = () => {
       }
       //setting Store variable
       setStatus("Awaiting Approval");
-      setRegistrationMessage("Registration form was sent sucessfully");
+      setRegistrationMessage("Registration form was submitted sucessfully");
       setIsDialogOpen(false);
     } catch (error) {
       setRegistrationMessage("Something went wrong Please check with office!");
@@ -129,9 +129,9 @@ const IdUpload = () => {
   };
   const renderFilePreview = (imageUrl: string | null, isLoading: boolean) => {
     return (
-      <div className="mt-2 p-4 bg-white relative">
+      <div className="mt-2 rounded bg-white relative">
         {isLoading ? (
-          <div role="status" className="flex items-center justify-center h-[15vh]">
+          <div role="status" className="flex items-center justify-center h-auto">
             <Loader
               type="hourglass"
               bgColor={"#7c3ab3"}
@@ -142,11 +142,11 @@ const IdUpload = () => {
           </div>
         ) : (
           <Image
-            src={imageUrl || User}
+            src={imageUrl || IdCard}
             alt="uploaded preview"
-            className="w-full h-20"
-            height={250}
-            width={250}
+            className="w-full max-h-48 object-cover"
+            height={756}
+            width={756}
           />
         )}
       </div>
@@ -154,7 +154,7 @@ const IdUpload = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-1">
       <h4 className="text-md font-semibold mb-4 text-center">
         {status === "Pending" ? "Upload Your" : "Your Uploaded"} ID Documents
       </h4>
@@ -164,9 +164,9 @@ const IdUpload = () => {
         </p>
       )}
       <hr />
-      <div className="flex flex-wrap gap-4 items-center justify-center mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         {/* Aadhaar Front */}
-        <div className="flex flex-col items-center shadow-2xl">
+        <div className="flex flex-col items-center shadow-xl rounded">
           <div className="mt-2 text-center p-4">Adhaar Card Front</div>
           {status === "Pending" && (
             <button
