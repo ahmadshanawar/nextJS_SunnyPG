@@ -146,7 +146,6 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
             <div className="flex justify-between items-center">
               {/* Name aligned to the left */}
               <h2 className="text-sm font-bold text-gray-800">{user?.name}</h2>
-              <p>{user.uid}</p>
               {/* Icons aligned to the right */}
               <div className="flex space-x-1 items-center">
                 {user?.status === "Active" && (
@@ -165,11 +164,13 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
             </div>
             <div className="mt-2">
               <p className="text-sm text-gray-600 whitespace-nowrap">
-                <strong>Mobile:</strong> {user?.mobile}
+                <strong>Room: </strong>
+                <strong className="text-semibold text-md">
+                  {user?.room_number}
+                </strong>
               </p>
               <p className="text-sm text-gray-600 whitespace-nowrap">
-                <strong>Room: </strong>
-                {user?.room_number}
+                <strong>Mobile:</strong> {user?.mobile}
               </p>
 
               {user.status === "Active" ? (

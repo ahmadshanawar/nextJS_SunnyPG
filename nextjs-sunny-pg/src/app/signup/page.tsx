@@ -143,7 +143,6 @@ const SignUpForm: React.FC = () => {
         formData.password
       );
       if (error) {
-        debugger;
         setRegistrationErrors(error);
         setIsSubmitting(false);
       }

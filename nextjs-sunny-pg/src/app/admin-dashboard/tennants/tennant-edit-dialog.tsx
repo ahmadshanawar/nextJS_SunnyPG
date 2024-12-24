@@ -24,7 +24,7 @@ type UserDetails = {
   role: string;
   occupation: string;
   institution: string;
-  room_number: number;
+  room_number: number | null;
   start_date: string;
   end_date: string;
   rent_amount: number;
@@ -98,54 +98,51 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
 
   const updateTennantsTable = async () => {
     if (editedData) {
+      const updateData = {
+        name: editedData.name,
+        mobile: editedData.mobile,
+        email: editedData.email,
+        room_number: editedData.status === "Active" ? editedData.room_number : null,
+        status: editedData.status,
+        adhaar: editedData.adhaar,
+        start_date: editedData.start_date,
+        end_date: editedData.end_date,
+        rent_amount: editedData.rent_amount,
+        mobile_verified: editedData.mobile_verified,
+      };
+
       const { data, error } = await supabase
         .from("Tennants")
-        .update({
-          name: editedData.name,
-          mobile: editedData.mobile,
-          email: editedData.email,
-          room_number: editedData.room_number,
-          status: editedData.status,
-          adhaar: editedData.adhaar,
-          start_date: editedData.start_date,
-          end_date: editedData.end_date,
-          rent_amount: editedData.rent_amount,
-          mobile_verified: editedData.mobile_verified,
-        })
+        .update(updateData)
         .eq("uid", editedData.uid);
       return { data, error };
     }
     return { data: null, error: null };
   };
-  const incrementOccupancy = async () => {
-    if (editedData) {
-      const { error } = await supabase.rpc("incrementoccupancy", {
-        x: 1,
-        row_id: editedData?.room_number as number,
-      });
 
-      return { data: null, error };
-    }
-    return { data: null, error: null };
+  const incrementOccupancy = async (roomId: number) => {
+    const { error } = await supabase.rpc("incrementoccupancy", {
+      x: 1,
+      row_id: roomId,
+    });
+    return { data: null, error };
   };
 
-  const decrementOccupancy = async () => {
-    if (editedData) {
-      const { error } = await supabase.rpc("incrementoccupancy", {
-        x: -1,
-        row_id: editedData?.room_number as number,
-      });
-
-      return { data: null, error };
-    }
-    return { data: null, error: null };
+  const decrementOccupancy = async (roomId: number) => {
+    const { error } = await supabase.rpc("incrementoccupancy", {
+      x: -1,
+      row_id: roomId,
+    });
+    return { data: null, error };
   };
+
   const handleInsertInitialPaymentRow = async () => {
     if (
       editedData &&
       editedData.start_date &&
       editedData.status === "Active" &&
-      editedData.room_number
+      editedData.room_number &&
+      editedData.status !== tenantData?.status
     ) {
       const { error, data } = await supabase.from("Payments").insert({
         uid: editedData.uid,
@@ -162,6 +159,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     }
     return { data: null, error: null };
   };
+
   const handleSubmit = async () => {
     if (editedData) {
       if (!isValid(editedData.adhaar)) {
@@ -190,18 +188,42 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
       }
 
       if (editedData.status === "Active") {
-        const incrementResult = await incrementOccupancy();
-        if (incrementResult.error) {
-          console.error("Error incrementing occupancy:", incrementResult.error);
+        if (editedData.room_number !== tenantData?.room_number) {
+          if (editedData.room_number) {
+            const incrementResult = await incrementOccupancy(editedData.room_number);
+            if (incrementResult.error) {
+              console.error("Error incrementing occupancy:", incrementResult.error);
+            } else {
+              console.log("Successfully incremented occupancy.");
+            }
+          }
+
+          if (tenantData?.room_number) {
+            const decrementResult = await decrementOccupancy(tenantData.room_number);
+            if (decrementResult.error) {
+              console.error("Error decrementing occupancy:", decrementResult.error);
+            } else {
+              console.log("Successfully decremented occupancy.");
+            }
+          }
         } else {
-          console.log("Successfully incremented occupancy.");
+          if (editedData.room_number) {
+            const incrementResult = await incrementOccupancy(editedData.room_number);
+            if (incrementResult.error) {
+              console.error("Error incrementing occupancy:", incrementResult.error);
+            } else {
+              console.log("Successfully incremented occupancy.");
+            }
+          }
         }
-      } else if (editedData.status === "Departed") {
-        const decrementResult = await decrementOccupancy();
-        if (decrementResult.error) {
-          console.error("Error decrementing occupancy:", decrementResult.error);
-        } else {
-          console.log("Successfully decremented occupancy.");
+      } else {
+        if (tenantData?.room_number) {
+          const decrementResult = await decrementOccupancy(tenantData.room_number);
+          if (decrementResult.error) {
+            console.error("Error decrementing occupancy:", decrementResult.error);
+          } else {
+            console.log("Successfully decremented occupancy.");
+          }
         }
       }
 
@@ -222,6 +244,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
       });
     }
   };
+
   const handleConfirm = () => {
     if (editedData && editedData.uid) {
       setEditedData({
@@ -231,6 +254,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     }
     setDialogOpen(false);
   };
+
   const handleCancel = () => setDialogOpen(false);
 
   return (
@@ -312,20 +336,20 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                   <div className="mb-3">
                     <RoomDropdown
                       onRoomSelect={handleRoomSelect}
-                      roomNumber={editedData.room_number}
+                      roomNumber={editedData.room_number || 0}
                     />
                   </div>
                   <div className="mb-3">
                     <label className="block mb-1">Start Date</label>
                     <input
+                      required
                       type="date"
                       name="start_date"
-                      value={
-                        editedData?.start_date ||
-                        format(endOfDay(new Date()), "yyyy-MM-dd")
-                      }
+                      value={editedData?.start_date || ""}
                       onChange={handleInputChange}
-                      className="border rounded p-2 w-full"
+                      className={`border rounded p-2 w-full ${
+                        !editedData?.start_date ? "border-red-500" : ""
+                      }`}
                     />
                   </div>
                   <div className="mb-3">
@@ -435,9 +459,15 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={!isModified} // Disable if not modified
+                  disabled={
+                    !isModified ||
+                    (editedData.status === "Active" && !editedData.start_date)
+                  } // Disable if not modified or if status is Active and start date is not set
                   className={`${
-                    isModified ? "bg-purple-500" : "bg-gray-400"
+                    isModified &&
+                    (editedData.status !== "Active" || editedData.start_date)
+                      ? "bg-purple-500"
+                      : "bg-gray-400"
                   } text-white rounded py-2 px-4 focus:outline-none`}
                 >
                   Save
