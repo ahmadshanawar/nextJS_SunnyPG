@@ -107,14 +107,16 @@ export default function Tennants() {
         <div className="text-center my-5">No Users Found</div>
       )}
       {!loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 xl:grid-cols-4 mx-2">
-          {users?.map((user: UserDetails) => {
-            return (
-              <div key={user.uid}>
-                <TennantCard user={user} refreshUsers={getUsers} />
-              </div>
-            );
-          })}
+        <div className="h-[calc(100vh-150px)] overflow-y-auto mx-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {users?.map((user: UserDetails) => {
+              return (
+                <div key={user.uid}>
+                  <TennantCard user={user} refreshUsers={getUsers} />
+                </div>
+              );
+            })}
+          </div>
         </div>
       ) : (
         <div role="status" className="flex items-center justify-center h-[70vh]">

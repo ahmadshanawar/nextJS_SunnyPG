@@ -26,6 +26,16 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
       path: "/admin-dashboard/admin-dash",
       icon: <FaGaugeSimple className="mr-2" />,
     },
+    {
+      name: "Payments",
+      path: "/admin-dashboard/payments",
+      icon: <FaGaugeSimple className="mr-2" />,
+    },
+    {
+      name: "Expenses",
+      path: "/admin-dashboard/expenses",
+      icon: <FaGaugeSimple className="mr-2" />,
+    },
   ];
 
   return (
