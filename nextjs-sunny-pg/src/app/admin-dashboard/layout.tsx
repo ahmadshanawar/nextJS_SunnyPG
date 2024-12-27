@@ -3,8 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { FaBars, FaBook, FaUsers } from "react-icons/fa";
+import { FaBars, FaBook, FaDollarSign, FaUsers } from "react-icons/fa";
 import { FaGaugeSimple, FaXmark } from "react-icons/fa6";
+import { GiExpense } from "react-icons/gi";
 
 const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -12,9 +13,20 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     {
+      name: "Dashboard",
+      path: "/admin-dashboard/admin-dash",
+      icon: <FaGaugeSimple className="mr-2" />,
+    },
+    {
       name: "Tenants",
       path: "/admin-dashboard/tennants",
       icon: <FaUsers className="mr-2" />,
+    },
+
+    {
+      name: "Payments",
+      path: "/admin-dashboard/payments",
+      icon: <FaDollarSign className="mr-2" />,
     },
     {
       name: "Occupancy",
@@ -22,19 +34,9 @@ const AdminPageLayout = ({ children }: { children: React.ReactNode }) => {
       icon: <FaBook className="mr-2" />,
     },
     {
-      name: "Dashboard",
-      path: "/admin-dashboard/admin-dash",
-      icon: <FaGaugeSimple className="mr-2" />,
-    },
-    {
-      name: "Payments",
-      path: "/admin-dashboard/payments",
-      icon: <FaGaugeSimple className="mr-2" />,
-    },
-    {
       name: "Expenses",
       path: "/admin-dashboard/expenses",
-      icon: <FaGaugeSimple className="mr-2" />,
+      icon: <GiExpense className="mr-2" />,
     },
   ];
 

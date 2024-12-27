@@ -14,7 +14,7 @@ import {
 import Loader from "react-js-loader";
 
 interface Payment {
-  id: string;
+  pay_id: string;
   amount: number;
   paid_on: string;
   billing_start_date: string;
@@ -117,7 +117,7 @@ const PaymentsPage = () => {
       <div className="flex justify-end">
         <h1 className="text-2xl font-semibold mb-1">Payments</h1>
       </div>
-      <hr className="mb-3" />
+      <hr className="mb-2" />
 
       <div className="md:flex md:items-center md:justify-end">
         <div
@@ -244,21 +244,21 @@ const PaymentsPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {payments.map((payment) => (
-                <tr key={payment.id}>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm">
+              {payments?.map((payment: Payment, index: number) => (
+                <tr key={`${payment.pay_id}-${index}`}>
+                  <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {payment.tennant.name}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {payment.tennant.room_number}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {payment.amount}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {format(parseISO(payment.paid_on), "dd-MM-yyyy")}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {`${format(
                       parseISO(payment.billing_start_date),
                       "dd-MM-yyyy"

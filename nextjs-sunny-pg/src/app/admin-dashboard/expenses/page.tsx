@@ -20,7 +20,7 @@ interface Expense {
   item: string;
   date: string;
   amount: string;
-  added_by: string;
+  uid: string;
   tennant: {
     name: string;
   };
@@ -33,6 +33,7 @@ const categoryOptions = [
   "Carpenter",
   "House Tax",
   "Electricity Bill",
+  "Painting",
   "Others",
 ];
 
@@ -67,7 +68,7 @@ const ExpensesPage = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("Expenses")
-      .select(`*, tennant:added_by (name)`)
+      .select(`*, tennant:uid (name)`)
       .gte("date", startDate)
       .lte("date", endDate)
       .order("date", { ascending: false });
@@ -96,7 +97,7 @@ const ExpensesPage = () => {
 
     const { data, error } = await supabase
       .from("Expenses")
-      .insert([{ category, item, date, amount, added_by: userId }]);
+      .insert([{ category, item, date, amount, uid: userId }]);
 
     if (error) {
       console.error("Error adding expense:", error);
@@ -134,14 +135,14 @@ const ExpensesPage = () => {
   };
 
   const getSortIcon = (key: string) => {
-    if (!sortConfig) return <FaSort className="text-md ml-1" />;
+    if (!sortConfig) return <FaSort className="text-lg ml-1" />;
     if (sortConfig.key === key) {
       if (sortConfig.direction === "ascending")
-        return <FaSortUp className="text-md ml-1" />;
+        return <FaSortUp className="text-lg ml-1" />;
       if (sortConfig.direction === "descending")
-        return <FaSortDown className="text-md ml-1" />;
+        return <FaSortDown className="text-lg ml-1" />;
     }
-    return <FaSort className="text-md ml-1" />;
+    return <FaSort className="text-lg ml-1" />;
   };
 
   return (
@@ -150,11 +151,19 @@ const ExpensesPage = () => {
         <h1 className="text-2xl font-semibold">Expenses</h1>
       </div>
       <hr className="mb-2" />
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
+        <div className="md:flex md:items-center md:justify-end">
+          <button
+            onClick={() => setIsDialogOpen(true)}
+            className="text-gray-700 px-3 py-2 rounded-md flex items-center border border-gray-200 bg-gray-100"
+          >
+            <FaPlus className="text-md mr-1" />
+          </button>
+        </div>
         <div
           className={`${
             isFilterOpen ? "block" : "hidden"
-          } sm:flex sm:items-center sm:space-x-4 w-full`}
+          } sm:flex sm:items-center sm:space-x-4`}
         >
           <div className="mr-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -193,7 +202,7 @@ const ExpensesPage = () => {
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             className="flex justify-end sm:hidden"
           >
-            <button className="text-gray-700 px-1 py-1 mr-1 rounded-md flex items-center border border-gray-200 bg-gray-100">
+            <button className="text-gray-700 px-1 py-1 ml-1 rounded-md flex items-center border border-gray-200 bg-gray-100">
               <span className="ml-2">
                 <FaFilter className="text-md" />
               </span>
@@ -206,14 +215,6 @@ const ExpensesPage = () => {
               </div>
             </button>
           </div>
-        </div>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-end">
-          <button
-            onClick={() => setIsDialogOpen(true)}
-            className="text-gray-700 px-3 py-2 rounded-md flex items-center border border-gray-200 bg-gray-100"
-          >
-            <FaPlus className="text-md mr-1" />
-          </button>
         </div>
       </div>
 
@@ -328,7 +329,9 @@ const ExpensesPage = () => {
                   className="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("date")}
                 >
-                  <div className="flex items-center">Date {getSortIcon("date")}</div>
+                  <div className="flex items-center">
+                    Date (DD/MM/YYYY) {getSortIcon("date")}
+                  </div>
                 </th>
                 <th
                   className="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -360,19 +363,19 @@ const ExpensesPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {expenses.map((expense) => (
                 <tr key={expense.id}>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {format(parseISO(expense.date), "dd-MM-yyyy")}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.category}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.item}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.amount}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.tennant.name}
                   </td>
                 </tr>

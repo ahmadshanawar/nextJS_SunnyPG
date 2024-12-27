@@ -38,7 +38,8 @@ const RoomBoxContainer = () => {
 
       const { data: tennantData, error: tennantError } = await supabase
         .from("Tennants")
-        .select("name, room_number");
+        .select("name, room_number")
+        .eq("status", "Active");
       if (tennantError) {
         console.error(tennantError);
       } else {

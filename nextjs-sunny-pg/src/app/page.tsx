@@ -2,12 +2,15 @@
 import { LandingPage } from "./components/LandingPage";
 import { useEffect } from "react";
 import { restoreSession } from "@/lib/sessions";
-import useUserStore from "@/lib/store/userStore";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { userId } = useUserStore();
+  const router = useRouter();
   useEffect(() => {
-    restoreSession();
+    const result = restoreSession();
+    if (!result) {
+      router.push("/login");
+    }
   }, []);
   return (
     <div>
