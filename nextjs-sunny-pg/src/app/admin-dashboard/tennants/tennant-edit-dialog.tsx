@@ -317,7 +317,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="block mb-1">Start Date</label>
+                    <label className="block mb-1">Start Date(MM/DD/YYYY)</label>
                     <input
                       required
                       type="date"

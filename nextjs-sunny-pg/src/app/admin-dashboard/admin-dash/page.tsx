@@ -19,7 +19,7 @@ export default function AdminDash() {
         <div className="flex space-x-4">
           <div>
             <label className="flex justify-end block text-sm font-medium text-gray-700">
-              Start Date:
+              Start Date:(MM/DD/YYYY)
             </label>
             <input
               type="date"
@@ -30,7 +30,7 @@ export default function AdminDash() {
           </div>
           <div>
             <label className="flex justify-end block text-sm font-medium text-gray-700">
-              End Date:
+              End Date: (MM/DD/YYYY)
             </label>
             <input
               type="date"

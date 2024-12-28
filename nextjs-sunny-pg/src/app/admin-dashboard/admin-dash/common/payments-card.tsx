@@ -135,8 +135,8 @@ const PaymentsCard = ({ startDate, endDate }: PaymentsCardProps) => {
                 Revenue
               </div>
               <div className="text-sm text-gray-500">
-                ({format(new Date(startDate), "dd-MM-yyyy")} -{" "}
-                {format(new Date(endDate), "dd-MM-yyyy")})
+                ({format(new Date(startDate), "dd-MMM-yyyy")} -
+                {format(new Date(endDate), "dd-MMM-yyyy")})
               </div>
             </div>
           </div>

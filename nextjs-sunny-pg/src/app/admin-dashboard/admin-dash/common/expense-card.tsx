@@ -158,8 +158,8 @@ const ExpenseCard = ({ startDate, endDate }: ExpenseCardProps) => {
                 Expenses
               </div>
               <div className="text-sm text-gray-500">
-                ({format(new Date(startDate), "dd-MM-yyyy")} -{" "}
-                {format(new Date(endDate), "dd-MM-yyyy")})
+                ({format(new Date(startDate), "dd-MMM-yyyy")} -
+                {format(new Date(endDate), "dd-MMM-yyyy")})
               </div>
             </div>
           </div>
@@ -170,10 +170,10 @@ const ExpenseCard = ({ startDate, endDate }: ExpenseCardProps) => {
             <div className="text-sm">
               <ul className="list-disc list-inside">
                 {addedBy.map((user) => (
-                  <li key={user.name}>
+                  <div key={user.name}>
                     {user.name.charAt(0).toUpperCase() + user.name.slice(1)}: ₹
                     {formatAmount(user.total)}
-                  </li>
+                  </div>
                 ))}
               </ul>
             </div>

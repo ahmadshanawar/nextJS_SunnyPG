@@ -146,7 +146,7 @@ const PaymentsPage = () => {
         >
           <div className="mr-2">
             <label className="block text-sm font-medium text-gray-700">
-              Start Date:
+              Start Date:(MM/DD/YYYY)
             </label>
             <input
               type="date"
@@ -157,7 +157,7 @@ const PaymentsPage = () => {
           </div>
           <div className="mr-2">
             <label className="block text-sm font-medium text-gray-700">
-              End Date:
+              End Date:(MM/DD/YYYY)
             </label>
             <input
               type="date"
@@ -258,15 +258,15 @@ const PaymentsPage = () => {
                     {payment.amount}
                   </td>
                   <td className="px-2 py-2 whitespace-nowrap text-sm">
-                    {format(parseISO(payment.paid_on), "dd-MM-yyyy")}
+                    {format(parseISO(payment.paid_on), "dd-MMM-yyyy")}
                   </td>
                   <td className="px-2 py-2 whitespace-nowrap text-sm">
                     {`${format(
                       parseISO(payment.billing_start_date),
-                      "dd-MM-yyyy"
+                      "dd-MMM-yyyy"
                     )} - ${format(
                       parseISO(payment.billing_end_date),
-                      "dd-MM-yyyy"
+                      "dd-MMM-yyyy"
                     )}`}
                   </td>
                 </tr>

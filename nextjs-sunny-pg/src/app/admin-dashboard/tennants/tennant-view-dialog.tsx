@@ -6,6 +6,7 @@ import User from "../../../../public/images/user.png";
 import { supabase } from "../../../lib/supabase"; // Assuming you've already set up Supabase client
 import { FaXmark } from "react-icons/fa6";
 import Loader from "react-js-loader";
+import { format } from "date-fns";
 
 type UserDetails = {
   uid: string;
@@ -106,7 +107,9 @@ const TennatViewDialog: React.FC<ViewUserDialogProps> = ({
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">Start Date:</span>
-                    <p className="text-gray-700">{tenantData.start_date}</p>
+                    <p className="text-gray-700">
+                      {format(new Date(tenantData.start_date), "dd-MMM-yyyy")}
+                    </p>
                   </div>
                   {tenantData.status === "Departed" && (
                     <div>

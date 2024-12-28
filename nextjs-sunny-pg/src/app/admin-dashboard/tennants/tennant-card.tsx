@@ -105,11 +105,12 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
       ? "Paid"
       : "Pending"
     : "Pending";
+
   const billingPeriod = currentPayment
     ? `${format(
         new Date(currentPayment.billing_start_date),
-        "dd-MM-yyyy"
-      )} <-> ${format(new Date(currentPayment.billing_end_date), "dd-MM-yyyy")}`
+        "dd-MMM-yyyy"
+      )} <-> ${format(new Date(currentPayment.billing_end_date), "dd-MMM-yyyy")}`
     : "";
 
   return (

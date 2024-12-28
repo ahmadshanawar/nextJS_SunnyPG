@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import TermsAndConditions from "./terms-conditions";
 
 interface FormData {
   name: string;
@@ -53,6 +54,16 @@ const SignUpForm: React.FC = () => {
     termsAccepted: false,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleTermsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   const [registrationErrors, setRegistrationErrors] = useState<any>();
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -311,7 +322,11 @@ const SignUpForm: React.FC = () => {
           />
           <label className="text-sm">
             I agree to the{" "}
-            <a href="#" className="text-purple-600 hover:underline">
+            <a
+              href="#"
+              onClick={handleTermsClick}
+              className="text-purple-600 hover:underline"
+            >
               Terms and Conditions
             </a>
           </label>
@@ -336,6 +351,7 @@ const SignUpForm: React.FC = () => {
           </button>
         </div>
       </form>
+      {isModalOpen && <TermsAndConditions onClose={closeModal} />}
     </div>
   );
 };
