@@ -40,6 +40,7 @@ const Profile = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   const fetchUserData = async () => {
     if (!userId) return;
@@ -83,12 +84,25 @@ const Profile = () => {
     }
   }, [message]);
 
+  useEffect(() => {
+    if (photoError) {
+      const timer = setTimeout(() => {
+        setPhotoError(null); // Clear the error message after 5 seconds
+      }, 5000);
+      // Cleanup timer if component unmounts or error message changes
+      return () => clearTimeout(timer);
+    }
+  }, [photoError]);
+
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (userId) {
       setIsLoadingPhoto(true);
       const pathName = `photo-ids/${userId}/profilePhoto/`;
       const file: any = event.target.files?.[0];
       const compressedFile: any = await compressImage(file);
+      if (!compressedFile) {
+        setPhotoError("Failed to upload photo. Please check you image file.");
+      }
       if (!file) return;
       try {
         const updatedPhotoUrl = await uploadPhoto(
@@ -102,6 +116,9 @@ const Profile = () => {
         }
       } catch (error) {
         console.error("Error uploading photo:", error);
+        setPhotoError(
+          "Failed to upload photo. Please try again with a different image file."
+        );
       } finally {
         setIsLoadingPhoto(false);
       }
@@ -277,6 +294,13 @@ const Profile = () => {
                 }`}
               >
                 {message}
+              </div>
+            )}
+
+            {/* Photo Error Message */}
+            {photoError && (
+              <div className="mt-4 px-5 py-3 rounded text-white bg-red-400">
+                {photoError}
               </div>
             )}
 

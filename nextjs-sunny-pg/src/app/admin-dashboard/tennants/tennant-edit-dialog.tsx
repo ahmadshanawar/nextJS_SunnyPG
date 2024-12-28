@@ -9,7 +9,7 @@ import { FaXmark } from "react-icons/fa6";
 import { isValid } from "@make-sense/adhaar-validator";
 import RoomDropdown from "./rooms_dropdown";
 import ConfirmationDialog from "@/app/components/confirmation-dialog";
-import { addMonths, endOfDay, format } from "date-fns";
+import { addMonths, format } from "date-fns";
 import Loader from "react-js-loader";
 import useUserStore from "@/lib/store/userStore";
 
@@ -137,6 +137,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   };
 
   const handleInsertInitialPaymentRow = async () => {
+    debugger;
     if (
       editedData &&
       editedData.start_date &&
@@ -166,63 +167,39 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
         alert("Aadhaar Number is invalid!");
         return;
       }
-
       const updateResult = await updateTennantsTable();
       if (updateResult.error) {
         console.error("Error updating Tennants table:", updateResult.error);
-      } else {
-        console.log("Successfully updated Tennants table:", updateResult.data);
       }
-
       const initialPaymentRowAddResult = await handleInsertInitialPaymentRow();
       if (initialPaymentRowAddResult.error) {
         console.error(
           "Error updating payments table:",
           initialPaymentRowAddResult.error
         );
-      } else {
-        console.log(
-          "Successfully inserted row payments table:",
-          initialPaymentRowAddResult.data
-        );
       }
 
-      if (editedData.status === "Active") {
-        if (editedData.room_number !== tenantData?.room_number) {
-          if (editedData.room_number) {
-            const incrementResult = await incrementOccupancy(editedData.room_number);
-            if (incrementResult.error) {
-              console.error("Error incrementing occupancy:", incrementResult.error);
-            } else {
-              console.log("Successfully incremented occupancy.");
-            }
-          }
-
-          if (tenantData?.room_number) {
-            const decrementResult = await decrementOccupancy(tenantData.room_number);
-            if (decrementResult.error) {
-              console.error("Error decrementing occupancy:", decrementResult.error);
-            } else {
-              console.log("Successfully decremented occupancy.");
-            }
-          }
-        } else {
-          if (editedData.room_number) {
-            const incrementResult = await incrementOccupancy(editedData.room_number);
-            if (incrementResult.error) {
-              console.error("Error incrementing occupancy:", incrementResult.error);
-            } else {
-              console.log("Successfully incremented occupancy.");
-            }
+      if (editedData.room_number !== tenantData?.room_number) {
+        if (editedData.room_number) {
+          const incrementResult = await incrementOccupancy(editedData.room_number);
+          if (incrementResult.error) {
+            console.error("Error incrementing occupancy:", incrementResult.error);
           }
         }
-      } else {
+
         if (tenantData?.room_number) {
           const decrementResult = await decrementOccupancy(tenantData.room_number);
           if (decrementResult.error) {
             console.error("Error decrementing occupancy:", decrementResult.error);
-          } else {
-            console.log("Successfully decremented occupancy.");
+          }
+        }
+      }
+
+      if (editedData.status !== "Active") {
+        if (tenantData?.room_number) {
+          const decrementResult = await decrementOccupancy(tenantData.room_number);
+          if (decrementResult.error) {
+            console.error("Error decrementing occupancy:", decrementResult.error);
           }
         }
       }
@@ -336,7 +313,7 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                   <div className="mb-3">
                     <RoomDropdown
                       onRoomSelect={handleRoomSelect}
-                      roomNumber={editedData.room_number || 0}
+                      roomNumber={editedData.room_number || null}
                     />
                   </div>
                   <div className="mb-3">

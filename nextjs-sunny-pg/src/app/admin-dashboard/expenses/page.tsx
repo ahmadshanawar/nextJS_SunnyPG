@@ -145,6 +145,10 @@ const ExpensesPage = () => {
     return <FaSort className="text-lg ml-1" />;
   };
 
+  const calculateTotalAmount = () => {
+    return expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+  };
+
   return (
     <div className="container mx-auto p-4 w-screen">
       <div className="flex justify-end">
@@ -364,7 +368,7 @@ const ExpensesPage = () => {
               {expenses.map((expense) => (
                 <tr key={expense.id}>
                   <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {format(parseISO(expense.date), "dd-MM-yyyy")}
+                    {format(parseISO(expense.date), "dd-MMM-yyyy")}
                   </td>
                   <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.category}
@@ -380,6 +384,18 @@ const ExpensesPage = () => {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-2 py-2 text-right text-sm font-medium text-gray-900"
+                >
+                  Total:
+                </td>
+                <td className="px-2 py-2 text-sm font-medium text-gray-900">
+                  {calculateTotalAmount()}
+                </td>
+                <td className="px-2 py-2"></td>
+              </tr>
             </tbody>
           </table>
         </div>

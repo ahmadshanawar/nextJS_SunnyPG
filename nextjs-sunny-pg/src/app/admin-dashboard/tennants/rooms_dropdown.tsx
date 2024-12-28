@@ -9,7 +9,7 @@ interface Room {
 
 interface RoomDropdownProps {
   onRoomSelect: (roomId: number | null) => void;
-  roomNumber: number;
+  roomNumber: number | null;
 }
 
 const RoomDropdown: React.FC<RoomDropdownProps> = ({ onRoomSelect, roomNumber }) => {

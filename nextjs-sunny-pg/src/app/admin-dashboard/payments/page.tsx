@@ -111,7 +111,9 @@ const PaymentsPage = () => {
     }
     return <FaSortDown className="ml-1 text-lg" />;
   };
-
+  const calculateTotalAmount = () => {
+    return payments.reduce((sum, payment) => sum + payment.amount, 0);
+  };
   return (
     <div className="container mx-auto p-4 w-screen">
       <div className="flex justify-end">
@@ -249,16 +251,16 @@ const PaymentsPage = () => {
                   <td className="px-2 py-3 whitespace-nowrap text-sm">
                     {payment.tennant.name}
                   </td>
-                  <td className="px-2 py-3 whitespace-nowrap text-sm">
+                  <td className="px-2 py-2 whitespace-nowrap text-sm">
                     {payment.tennant.room_number}
                   </td>
-                  <td className="px-2 py-3 whitespace-nowrap text-sm">
+                  <td className="px-2 py-2 whitespace-nowrap text-sm">
                     {payment.amount}
                   </td>
-                  <td className="px-2 py-3 whitespace-nowrap text-sm">
+                  <td className="px-2 py-2 whitespace-nowrap text-sm">
                     {format(parseISO(payment.paid_on), "dd-MM-yyyy")}
                   </td>
-                  <td className="px-2 py-3 whitespace-nowrap text-sm">
+                  <td className="px-2 py-2 whitespace-nowrap text-sm">
                     {`${format(
                       parseISO(payment.billing_start_date),
                       "dd-MM-yyyy"
@@ -269,6 +271,18 @@ const PaymentsPage = () => {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td
+                  colSpan={2}
+                  className="px-2 py-2 text-right text-sm text-bold font-medium text-gray-900"
+                >
+                  Total:
+                </td>
+                <td className="px-2 py-2 text-sm font-medium text-bold text-gray-900">
+                  {calculateTotalAmount()}
+                </td>
+                <td className="px-2 py-2"></td>
+              </tr>
             </tbody>
           </table>
         </div>
