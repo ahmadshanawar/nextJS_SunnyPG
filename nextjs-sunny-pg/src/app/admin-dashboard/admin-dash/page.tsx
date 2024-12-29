@@ -14,7 +14,7 @@ export default function AdminDash() {
   );
 
   return (
-    <div className="container mx-auto p-4 mt-4">
+    <div className="container mx-auto p-4 mt-8">
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-4">
           <div>
