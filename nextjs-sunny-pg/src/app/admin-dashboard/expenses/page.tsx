@@ -12,6 +12,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import DateSelector from "@/app/components/DateSelector";
 
 interface Expense {
   id: string;
@@ -170,25 +171,17 @@ const ExpensesPage = () => {
           } sm:flex sm:items-center sm:space-x-4`}
         >
           <div className="mr-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Start Date:(MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full px-1 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+            <DateSelector
+              value={startDate ? parseISO(startDate) : null}
+              onChange={(date) => setStartDate(date)}
+              label="Start Date"
             />
           </div>
           <div className="mr-2">
-            <label className="block text-sm font-medium text-gray-700">
-              End Date:(MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full px-1 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+            <DateSelector
+              value={endDate ? parseISO(endDate) : null}
+              onChange={(date) => setEndDate(date)}
+              label="End Date"
             />
           </div>
           <div className="mt-6">
@@ -270,12 +263,15 @@ const ExpensesPage = () => {
                       <label className="block text-sm font-medium text-gray-700">
                         Date
                       </label>
-                      <input
-                        type="date"
-                        name="date"
-                        value={newExpense.date}
-                        onChange={handleInputChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+                      <DateSelector
+                        value={newExpense.date ? parseISO(newExpense.date) : null}
+                        onChange={(date) =>
+                          setNewExpense((prev) => ({
+                            ...prev,
+                            date: date ? format(date, "yyyy-MM-dd") : "",
+                          }))
+                        }
+                        label="Date"
                       />
                     </div>
                     <div className="mr-2">

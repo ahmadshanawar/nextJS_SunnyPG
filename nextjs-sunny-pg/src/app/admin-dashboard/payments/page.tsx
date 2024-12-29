@@ -12,6 +12,7 @@ import {
   FaFilter,
 } from "react-icons/fa";
 import Loader from "react-js-loader";
+import DateSelector from "@/app/components/DateSelector";
 
 interface Payment {
   pay_id: string;
@@ -145,25 +146,17 @@ const PaymentsPage = () => {
           } sm:flex sm:items-center sm:space-x-4`}
         >
           <div className="mr-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Start Date:(MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full px-1 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+            <DateSelector
+              value={new Date(startDate)}
+              onChange={setStartDate}
+              label="Start Date"
             />
           </div>
           <div className="mr-2">
-            <label className="block text-sm font-medium text-gray-700">
-              End Date:(MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full px-1 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
+            <DateSelector
+              value={new Date(endDate)}
+              onChange={setEndDate}
+              label="End Date"
             />
           </div>
           <div className="mt-6">

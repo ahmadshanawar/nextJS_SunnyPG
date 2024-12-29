@@ -9,9 +9,10 @@ import { FaXmark } from "react-icons/fa6";
 import { isValid } from "@make-sense/adhaar-validator";
 import RoomDropdown from "./rooms_dropdown";
 import ConfirmationDialog from "@/app/components/confirmation-dialog";
-import { addMonths, format } from "date-fns";
+import { addMonths, format, parseISO } from "date-fns";
 import Loader from "react-js-loader";
 import useUserStore from "@/lib/store/userStore";
+import DateSelector from "@/app/components/DateSelector";
 
 type UserDetails = {
   uid: string;
@@ -137,7 +138,6 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   };
 
   const handleInsertInitialPaymentRow = async () => {
-    debugger;
     if (
       editedData &&
       editedData.start_date &&
@@ -167,35 +167,44 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
         alert("Aadhaar Number is invalid!");
         return;
       }
+
       const updateResult = await updateTennantsTable();
       if (updateResult.error) {
         console.error("Error updating Tennants table:", updateResult.error);
-      }
-      const initialPaymentRowAddResult = await handleInsertInitialPaymentRow();
-      if (initialPaymentRowAddResult.error) {
-        console.error(
-          "Error updating payments table:",
-          initialPaymentRowAddResult.error
-        );
-      }
 
-      if (editedData.room_number !== tenantData?.room_number) {
-        if (editedData.room_number) {
-          const incrementResult = await incrementOccupancy(editedData.room_number);
-          if (incrementResult.error) {
-            console.error("Error incrementing occupancy:", incrementResult.error);
-          }
-        }
-
-        if (tenantData?.room_number) {
-          const decrementResult = await decrementOccupancy(tenantData.room_number);
-          if (decrementResult.error) {
-            console.error("Error decrementing occupancy:", decrementResult.error);
-          }
+        const initialPaymentRowAddResult = await handleInsertInitialPaymentRow();
+        if (initialPaymentRowAddResult.error) {
+          console.error(
+            "Error updating payments table:",
+            initialPaymentRowAddResult.error
+          );
         }
       }
 
-      if (editedData.status !== "Active") {
+      if (editedData.status === "Active") {
+        if (editedData.room_number !== tenantData?.room_number) {
+          if (editedData.room_number) {
+            const incrementResult = await incrementOccupancy(editedData.room_number);
+            if (incrementResult.error) {
+              console.error("Error incrementing occupancy:", incrementResult.error);
+            }
+          }
+
+          if (tenantData?.room_number) {
+            const decrementResult = await decrementOccupancy(tenantData.room_number);
+            if (decrementResult.error) {
+              console.error("Error decrementing occupancy:", decrementResult.error);
+            }
+          }
+        } else {
+          if (editedData.room_number) {
+            const incrementResult = await incrementOccupancy(editedData.room_number);
+            if (incrementResult.error) {
+              console.error("Error incrementing occupancy:", incrementResult.error);
+            }
+          }
+        }
+      } else {
         if (tenantData?.room_number) {
           const decrementResult = await decrementOccupancy(tenantData.room_number);
           if (decrementResult.error) {
@@ -317,16 +326,19 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="block mb-1">Start Date(MM/DD/YYYY)</label>
-                    <input
-                      required
-                      type="date"
-                      name="start_date"
-                      value={editedData?.start_date || ""}
-                      onChange={handleInputChange}
-                      className={`border rounded p-2 w-full ${
-                        !editedData?.start_date ? "border-red-500" : ""
-                      }`}
+                    <DateSelector
+                      value={
+                        editedData.start_date
+                          ? parseISO(editedData.start_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        setEditedData((prev) => ({
+                          ...prev!,
+                          start_date: date,
+                        }))
+                      }
+                      label="Start Date"
                     />
                   </div>
                   <div className="mb-3">
@@ -365,15 +377,17 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                   </div>
                   {editedData.status == "Departed" && (
                     <div className="mb-3">
-                      <label className="block mb-1">End Date</label>
-                      <input
-                        type="date"
-                        name="end_date"
+                      <DateSelector
                         value={
-                          editedData?.end_date || format(new Date(), "yyyy-MM-dd")
+                          editedData.end_date ? parseISO(editedData.end_date) : null
                         }
-                        onChange={handleInputChange}
-                        className="border rounded p-2 w-full"
+                        onChange={(date) =>
+                          setEditedData((prev) => ({
+                            ...prev!,
+                            end_date: date,
+                          }))
+                        }
+                        label="End Date"
                       />
                     </div>
                   )}

@@ -4,6 +4,7 @@ import { differenceInDays, addMonths, format, parseISO } from "date-fns";
 import Loader from "react-js-loader";
 import { FaXmark, FaTrash, FaFloppyDisk, FaSpinner } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
+import DateSelector from "@/app/components/DateSelector";
 
 interface TenantPaymentEditDialogProps {
   uid: string;
@@ -133,7 +134,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 h-screen w-screen">
           {loading ? (
             <Loader
               type="hourglass"
@@ -153,7 +154,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                   <FaXmark />
                 </button>
               </div>
-              <div className="overflow-x-auto">
+              <div className="h-[90%] overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
@@ -186,22 +187,32 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                       );
                       return (
                         <tr key={payment.pay_id}>
-                          <td className="px-1 py-2 whitespace-nowrap">
-                            <input
-                              className="border rounded p-1"
-                              type="date"
-                              value={payment.billing_start_date}
-                              onChange={(e) =>
+                          <td className="whitespace-nowrap">
+                            <DateSelector
+                              value={new Date(payment.billing_start_date)}
+                              onChange={(date) =>
                                 handleInputChange(
                                   payment.pay_id,
                                   "billing_start_date",
-                                  e.target.value
+                                  date
                                 )
                               }
+                              label=""
                             />
                           </td>
-                          <td className="px-1 py-2 whitespace-nowrap">
-                            <input
+                          <td className="whitespace-nowrap">
+                            <DateSelector
+                              value={new Date(payment.billing_end_date)}
+                              onChange={(date) =>
+                                handleInputChange(
+                                  payment.pay_id,
+                                  "billing_end_date",
+                                  date
+                                )
+                              }
+                              label=""
+                            />
+                            {/* <input
                               className="border rounded p-1"
                               type="date"
                               value={payment.billing_end_date}
@@ -212,7 +223,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                                   e.target.value
                                 )
                               }
-                            />
+                            /> */}
                           </td>
                           <td className="px-1 py-2 whitespace-nowrap">
                             <input

@@ -4,6 +4,7 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import TennantsCard from "./common/tennants-card";
 import ExpenseCard from "./common/expense-card";
 import PaymentsCard from "./common/payments-card";
+import DateSelector from "@/app/components/DateSelector";
 
 export default function AdminDash() {
   const [startDate, setStartDate] = useState<string>(
@@ -15,30 +16,18 @@ export default function AdminDash() {
 
   return (
     <div className="container mx-auto p-4 mt-8">
-      <div className="flex justify-between items-center mb-4">
+      <div className="items-center mb-4">
         <div className="flex space-x-4">
-          <div>
-            <label className="flex justify-end block text-sm font-medium text-gray-700">
-              Start Date:(MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
-            />
-          </div>
-          <div>
-            <label className="flex justify-end block text-sm font-medium text-gray-700">
-              End Date: (MM/DD/YYYY)
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-purple-800"
-            />
-          </div>
+          <DateSelector
+            value={new Date(startDate)}
+            onChange={setStartDate}
+            label="Start Date"
+          />
+          <DateSelector
+            value={new Date(endDate)}
+            onChange={setEndDate}
+            label="End Date"
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
