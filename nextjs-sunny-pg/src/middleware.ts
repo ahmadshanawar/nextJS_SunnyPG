@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
       return res;
     } else {
       // Redirect to not authorized page
-      console.log("Middleware: User is not authorized to access this route");
+      console.log("Middleware: User is not authorized to access this page");
       return NextResponse.rewrite(new URL("/not-authorized", req.url));
     }
   } catch (error) {
