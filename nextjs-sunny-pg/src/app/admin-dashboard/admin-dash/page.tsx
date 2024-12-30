@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { format, endOfMonth, startOfMonth } from "date-fns";
 import TennantsCard from "./common/tennants-card";
 import ExpenseCard from "./common/expense-card";
 import PaymentsCard from "./common/payments-card";
