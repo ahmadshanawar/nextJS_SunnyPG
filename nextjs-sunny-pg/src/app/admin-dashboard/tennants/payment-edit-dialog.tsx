@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import { differenceInDays, addMonths, format, parseISO } from "date-fns";
 import Loader from "react-js-loader";
-import { FaXmark, FaTrash, FaFloppyDisk, FaSpinner } from "react-icons/fa6";
+import { FaXmark, FaTrash, FaFloppyDisk, FaSpinner, FaPlus } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
 import DateSelector from "@/app/components/DateSelector";
 
@@ -31,6 +31,21 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
   const [editedRows, setEditedRows] = useState<{ [key: string]: boolean }>({});
   const [loadingSave, setLoadingSave] = useState<{ [key: string]: boolean }>({});
   const [loadingDelete, setLoadingDelete] = useState<{ [key: string]: boolean }>({});
+  const [tennantData, setTennantData] = useState<any>([]);
+
+  const fetchTennantData = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("Tennants")
+      .select("start_date, rent_amount,status,name")
+      .eq("uid", uid);
+    if (error) {
+      console.error("Error fetching Tennant data:", error);
+    } else {
+      setTennantData(data);
+    }
+    setLoading(false);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -50,6 +65,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
   useEffect(() => {
     if (uid && isOpen) {
       fetchData();
+      fetchTennantData();
     }
   }, [uid, isOpen]);
 
@@ -131,6 +147,27 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
     );
   };
 
+  const handleInsertInitialPaymentRow = async () => {
+    if (uid && tennantData[0]?.status === "Active") {
+      const { error, data } = await supabase.from("Payments").insert({
+        uid: uid,
+        added_by: uid,
+        billing_start_date: tennantData[0].start_date,
+        billing_end_date: format(
+          addMonths(new Date(tennantData[0].start_date), 1),
+          "yyyy-MM-dd"
+        ),
+        amount: tennantData[0].rent_amount,
+        paid: false,
+      });
+      if (error) {
+        console.error("Error inserting initial payment row:", error);
+      } else {
+        fetchData();
+      }
+    }
+  };
+
   return (
     <>
       {isOpen && (
@@ -154,6 +191,11 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                   <FaXmark />
                 </button>
               </div>
+              <hr />
+              <div className="my-2">
+                Name: <strong>{tennantData[0]?.name}</strong>
+              </div>
+              <hr />
               <div className="h-[90%] overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
@@ -212,18 +254,6 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                               }
                               label=""
                             />
-                            {/* <input
-                              className="border rounded p-1"
-                              type="date"
-                              value={payment.billing_end_date}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  payment.pay_id,
-                                  "billing_end_date",
-                                  e.target.value
-                                )
-                              }
-                            /> */}
                           </td>
                           <td className="px-1 py-2 whitespace-nowrap">
                             <input
@@ -283,24 +313,34 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                                   <FaFloppyDisk className="text-2xl" />
                                 )}
                               </button>
-                              {paymentData.length > 1 && (
-                                <button
-                                  onClick={() => handleDelete(payment.pay_id)}
-                                  className="text-red-500 hover:text-red-700 ml-2"
-                                  disabled={loadingDelete[payment.pay_id]}
-                                >
-                                  {loadingDelete[payment.pay_id] ? (
-                                    <FaSpinner className="animate-spin text-xl" />
-                                  ) : (
-                                    <FaTrash className="text-xl" />
-                                  )}
-                                </button>
-                              )}
+                              <button
+                                onClick={() => handleDelete(payment.pay_id)}
+                                className="text-red-500 hover:text-red-700 ml-2"
+                                disabled={loadingDelete[payment.pay_id]}
+                              >
+                                {loadingDelete[payment.pay_id] ? (
+                                  <FaSpinner className="animate-spin text-xl" />
+                                ) : (
+                                  <FaTrash className="text-xl" />
+                                )}
+                              </button>
                             </div>
                           </td>
                         </tr>
                       );
                     })}
+                    {paymentData?.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="px-2 py-3 text-center text-sm">
+                          <button
+                            className="flex items-center text-blue-500"
+                            onClick={handleInsertInitialPaymentRow}
+                          >
+                            <FaPlus className="mr-1" /> Add Payment
+                          </button>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

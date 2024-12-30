@@ -9,7 +9,7 @@ import { FaXmark } from "react-icons/fa6";
 import { isValid } from "@make-sense/adhaar-validator";
 import RoomDropdown from "./rooms_dropdown";
 import ConfirmationDialog from "@/app/components/confirmation-dialog";
-import { addMonths, format, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import Loader from "react-js-loader";
 import useUserStore from "@/lib/store/userStore";
 import DateSelector from "@/app/components/DateSelector";
@@ -137,30 +137,6 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
     return { data: null, error };
   };
 
-  const handleInsertInitialPaymentRow = async () => {
-    if (
-      editedData &&
-      editedData.start_date &&
-      editedData.status === "Active" &&
-      editedData.room_number &&
-      editedData.status !== tenantData?.status
-    ) {
-      const { error, data } = await supabase.from("Payments").insert({
-        uid: editedData.uid,
-        added_by: userId,
-        billing_start_date: editedData.start_date,
-        billing_end_date: format(
-          addMonths(new Date(editedData.start_date), 1),
-          "yyyy-MM-dd"
-        ),
-        amount: editedData.rent_amount,
-        paid: false,
-      });
-      return { data, error };
-    }
-    return { data: null, error: null };
-  };
-
   const handleSubmit = async () => {
     if (editedData) {
       if (!isValid(editedData.adhaar)) {
@@ -171,14 +147,6 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
       const updateResult = await updateTennantsTable();
       if (updateResult.error) {
         console.error("Error updating Tennants table:", updateResult.error);
-
-        const initialPaymentRowAddResult = await handleInsertInitialPaymentRow();
-        if (initialPaymentRowAddResult.error) {
-          console.error(
-            "Error updating payments table:",
-            initialPaymentRowAddResult.error
-          );
-        }
       }
 
       if (editedData.status === "Active") {
