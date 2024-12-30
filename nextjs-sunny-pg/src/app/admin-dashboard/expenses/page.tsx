@@ -260,9 +260,6 @@ const ExpensesPage = () => {
                       />
                     </div>
                     <div className="mr-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Date
-                      </label>
                       <DateSelector
                         value={newExpense.date ? parseISO(newExpense.date) : null}
                         onChange={(date) =>
