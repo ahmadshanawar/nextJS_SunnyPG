@@ -1,4 +1,4 @@
 .react-date-picker__calendar {
-  transform: scale(0.9); /* Adjust the scale to make the calendar smaller */
+  transform: scale(0.8); /* Adjust the scale to make the calendar smaller */
   transform-origin: top left;
 }
