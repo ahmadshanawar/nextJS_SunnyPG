@@ -6,13 +6,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "skerufgdotqrnhnezgxo.supabase.co",
+        hostname:
+          process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/^https?:\/\//, "") || "",
         port: "",
         pathname: "/**",
       },
     ],
-    // depricated
-    // domains: ["skerufgdotqrnhnezgxo.supabase.co"], // Add your Supabase domain here
   },
 };
 
