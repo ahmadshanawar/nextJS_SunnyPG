@@ -11,7 +11,7 @@ import {
   FaChevronUp,
   FaSearch,
 } from "react-icons/fa";
-import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import { FaSort, FaSortUp, FaSortDown, FaTrash } from "react-icons/fa";
 import DateSelector from "@/app/components/DateSelector";
 
 interface Expense {
@@ -60,6 +60,8 @@ const ExpensesPage = () => {
     key: string;
     direction: string;
   } | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
 
   useEffect(() => {
     fetchExpenses();
@@ -148,6 +150,23 @@ const ExpensesPage = () => {
 
   const calculateTotalAmount = () => {
     return expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+  };
+
+  const handleDeleteExpense = async () => {
+    if (!expenseToDelete) return;
+
+    const { error } = await supabase
+      .from("Expenses")
+      .delete()
+      .eq("id", expenseToDelete.id);
+
+    if (error) {
+      console.error("Error deleting expense:", error);
+    } else {
+      fetchExpenses();
+      setIsDeleteDialogOpen(false);
+      setExpenseToDelete(null);
+    }
   };
 
   return (
@@ -307,6 +326,44 @@ const ExpensesPage = () => {
         </div>
       )}
 
+      {isDeleteDialogOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black opacity-50"></div>
+          <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+                <div className="mt-3 sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Confirm Deletion
+                  </h3>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Are you sure you want to delete this expense?
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={handleDeleteExpense}
+              >
+                Delete
+              </button>
+              <button
+                type="button"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                onClick={() => setIsDeleteDialogOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <Loader
@@ -353,6 +410,9 @@ const ExpensesPage = () => {
                 <th className="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
                   <div className="flex items-center">Added By</div>
                 </th>
+                <th className="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
+                  <div className="flex items-center">Actions</div>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -373,6 +433,17 @@ const ExpensesPage = () => {
                   <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {expense.tennant.name}
                   </td>
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
+                    <button
+                      onClick={() => {
+                        setExpenseToDelete(expense);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
                 </tr>
               ))}
               <tr>
@@ -385,6 +456,7 @@ const ExpensesPage = () => {
                 <td className="px-2 py-2 text-sm font-medium text-gray-900">
                   {calculateTotalAmount()}
                 </td>
+                <td className="px-2 py-2"></td>
                 <td className="px-2 py-2"></td>
               </tr>
             </tbody>
