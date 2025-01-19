@@ -201,10 +201,10 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                   <thead>
                     <tr>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Billing Start Date (MM/DD/YYYY)
+                        Billing Start Date
                       </th>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Billing End Date (MM/DD/YYYY)
+                        Billing End Date
                       </th>
                       <th className="px-1 py-2 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amount(₹)
@@ -258,7 +258,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                           <td className="px-1 py-2 whitespace-nowrap">
                             <input
                               min={0}
-                              className="border rounded p-1"
+                              className="border rounded p-1 w-20 text-right text-bold"
                               type="number"
                               value={payment.amount}
                               onChange={(e) =>
@@ -291,7 +291,7 @@ const TenantPaymentEditDialog: React.FC<TenantPaymentEditDialogProps> = ({
                           </td>
                           <td className="px-1 py-2 whitespace-nowrap">
                             {payment.paid_on
-                              ? format(parseISO(payment.paid_on), "MM-dd-yyyy")
+                              ? format(parseISO(payment.paid_on), "dd-MMM-yyyy")
                               : "N/A"}
                           </td>
                           <td className="px-1 py-2 whitespace-nowrap">

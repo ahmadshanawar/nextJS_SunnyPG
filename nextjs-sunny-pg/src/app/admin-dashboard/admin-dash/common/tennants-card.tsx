@@ -1,49 +1,74 @@
 "use client";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import Loader from "react-js-loader";
 import { FaUsers } from "react-icons/fa";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
-const TennantsCard = () => {
-  const [activeTennants, setActiveTennants] = useState<number>(0);
-  const [vacancies, setVacancies] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+
+interface TennantsCardProps {
+  activeTennants: number;
+  vacancies: number;
+  loading: boolean;
+}
+
+const TennantsCard = ({ activeTennants, vacancies, loading }: TennantsCardProps) => {
+  const [chartOptions, setChartOptions] = useState({});
+  const [chartSeries, setChartSeries] = useState<number[]>([]);
 
   useEffect(() => {
-    fetchTennantsAndVacancies();
-  }, []);
+    setChartOptions({
+      chart: {
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: -90,
+          endAngle: 90,
+          hollow: {
+            margin: 115,
+            size: "50%",
+          },
+          track: {
+            background: "#e7e7e7",
+            strokeWidth: "97%",
+            margin: 5, // margin is in pixels
+            dropShadow: {
+              enabled: true,
+              top: 2,
+              left: 0,
+              color: "#444",
+              opacity: 1,
+              blur: 2,
+            },
+          },
+          dataLabels: {
+            name: {
+              show: true,
+              fontSize: "22px",
+            },
+            value: {
+              show: true,
+              fontSize: "16px",
+            },
+            total: {
+              show: true,
+              label: "Total",
+              formatter: function () {
+                return activeTennants + vacancies;
+              },
+            },
+          },
+        },
+      },
+      labels: ["Active Tennants"],
+    });
 
-  const fetchTennantsAndVacancies = async () => {
-    setLoading(true);
-    try {
-      const { data: tennantsData, error: tennantsError } = await supabase
-        .from("Tennants")
-        .select("uid")
-        .eq("status", "Active");
-
-      const { data: occupancyData, error: occupancyError } = await supabase
-        .from("Occupancy")
-        .select("id, max_tennant, occupancy");
-
-      if (tennantsError || occupancyError) {
-        console.error("Error fetching data:", tennantsError || occupancyError);
-        setLoading(false);
-        return;
-      }
-
-      const totalVacancies = occupancyData.reduce(
-        (sum, room) => sum + (room.max_tennant - room.occupancy),
-        0
-      );
-
-      setActiveTennants(tennantsData.length);
-      setVacancies(totalVacancies);
-    } catch (error) {
-      console.error("Unexpected error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const percentage = Math.round(
+      (activeTennants / (activeTennants + vacancies)) * 100
+    );
+    setChartSeries([percentage < 0 ? 0 : percentage]);
+  }, [activeTennants, vacancies]);
 
   return (
     <div className="my-2 mt-10 bg-white shadow-md rounded-lg p-4 w-full max-w-md mx-auto">
@@ -68,13 +93,22 @@ const TennantsCard = () => {
               <div className="text-sm text-gray-500">as of today</div>
             </div>
           </div>
-
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-3xl font-bold">
+          <div className="mb-2">
+            {chartSeries && (
+              <Chart
+                options={chartOptions}
+                series={chartSeries}
+                type="radialBar"
+                height={220}
+              />
+            )}
+          </div>
+          <div className="flex justify-between items-center mt-2">
+            <div className="text-2xl font-bold">
               {activeTennants} <span className="text-sm font-medium">Active</span>
             </div>
             <div className="h-6 border-l border-gray-300 mx-4"></div>
-            <div className="text-3xl font-bold">
+            <div className="text-2xl font-bold">
               {vacancies} <span className="text-sm font-medium">Vacancies</span>
             </div>
           </div>

@@ -1,6 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import Loader from "react-js-loader";
 import dynamic from "next/dynamic";
@@ -19,90 +17,22 @@ interface Expense {
 interface ExpenseCardProps {
   startDate: string;
   endDate: string;
+  expenses: Expense[];
+  totalAmount: number;
+  addedBy: { name: string; total: number }[];
+  dailyExpenses: number[];
+  loading: boolean;
 }
 
-const ExpenseCard = ({ startDate, endDate }: ExpenseCardProps) => {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [addedBy, setAddedBy] = useState<{ name: string; total: number }[]>([]);
-  const [dailyExpenses, setDailyExpenses] = useState<number[]>([]);
-
-  useEffect(() => {
-    fetchExpenses();
-  }, [startDate, endDate]);
-
-  const fetchExpenses = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("Expenses")
-        .select(`*, tennant:uid (name)`)
-        .gte("date", startDate)
-        .lte("date", endDate);
-
-      if (error) {
-        console.error("Error fetching expenses:", error);
-        setLoading(false);
-        return;
-      }
-
-      setExpenses(data);
-      calculateTotalAmount(data);
-      calculateAddedBy(data);
-      calculateDailyExpenses(data);
-    } catch (error) {
-      console.error("Unexpected error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const calculateTotalAmount = (data: Expense[]) => {
-    const total = data.reduce((sum, expense) => sum + expense.amount, 0);
-    setTotalAmount(total);
-  };
-
-  const calculateAddedBy = (data: Expense[]) => {
-    const addedByMap: { [key: string]: number } = {};
-    data.forEach((expense) => {
-      const name = expense.tennant?.name;
-      if (name) {
-        if (!addedByMap[name]) {
-          addedByMap[name] = 0;
-        }
-        addedByMap[name] += expense.amount;
-      }
-    });
-    const addedByArray = Object.keys(addedByMap).map((name) => ({
-      name,
-      total: addedByMap[name],
-    }));
-    setAddedBy(addedByArray);
-  };
-
-  const calculateDailyExpenses = (data: Expense[]) => {
-    const dailyExpensesMap: { [key: string]: number } = {};
-    data.forEach((expense) => {
-      const date = format(new Date(expense.date), "yyyy-MM-dd");
-      if (!dailyExpensesMap[date]) {
-        dailyExpensesMap[date] = 0;
-      }
-      dailyExpensesMap[date] += expense.amount;
-    });
-
-    const dailyExpensesArray = [];
-    for (
-      let date = new Date(startDate);
-      date <= new Date(endDate);
-      date.setDate(date.getDate() + 1)
-    ) {
-      const formattedDate = format(date, "yyyy-MM-dd");
-      dailyExpensesArray.push(dailyExpensesMap[formattedDate] || 0);
-    }
-    setDailyExpenses(dailyExpensesArray);
-  };
-
+const ExpenseCard = ({
+  startDate,
+  endDate,
+  expenses,
+  totalAmount,
+  addedBy,
+  dailyExpenses,
+  loading,
+}: ExpenseCardProps) => {
   const formatAmount = (amount: number) => {
     return amount.toLocaleString("en-IN");
   };
@@ -165,8 +95,8 @@ const ExpenseCard = ({ startDate, endDate }: ExpenseCardProps) => {
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <div className="text-3xl font-bold">₹{formatAmount(totalAmount)}</div>
-            <div className="h-6 border-l border-gray-300 mx-4"></div>
+            <div className="text-2xl font-bold">₹{formatAmount(totalAmount)}</div>
+            <div className="h-6 border-l border-gray-300 mx-3"></div>
             <div className="text-sm">
               <ul className="list-disc list-inside">
                 {addedBy.map((user) => (
