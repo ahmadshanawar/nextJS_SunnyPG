@@ -39,7 +39,7 @@ export default function AdminDash() {
   return (
     <>
       <div className="container mx-auto p-4 mt-8"></div>
-      <div className="items-center mb-4">
+      <div className="items-center mb-4 mx-2">
         <div className="flex space-x-4">
           <DateSelector
             value={new Date(startDate)}

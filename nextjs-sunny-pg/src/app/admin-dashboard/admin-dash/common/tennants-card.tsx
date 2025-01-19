@@ -21,6 +21,14 @@ const TennantsCard = ({ activeTennants, vacancies, loading }: TennantsCardProps)
       chart: {
         type: "radialBar",
       },
+      grid: {
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 20,
+          left: 0,
+        },
+      },
       plotOptions: {
         radialBar: {
           startAngle: -90,
@@ -45,7 +53,7 @@ const TennantsCard = ({ activeTennants, vacancies, loading }: TennantsCardProps)
           dataLabels: {
             name: {
               show: true,
-              fontSize: "22px",
+              fontSize: "12px",
             },
             value: {
               show: true,
@@ -53,6 +61,7 @@ const TennantsCard = ({ activeTennants, vacancies, loading }: TennantsCardProps)
             },
             total: {
               show: true,
+              fontSize: "16px",
               label: "Total",
               formatter: function () {
                 return activeTennants + vacancies;
@@ -93,13 +102,13 @@ const TennantsCard = ({ activeTennants, vacancies, loading }: TennantsCardProps)
               <div className="text-sm text-gray-500">as of today</div>
             </div>
           </div>
-          <div className="mb-2">
+          <div className="mb-2 h-40">
             {chartSeries && (
               <Chart
                 options={chartOptions}
                 series={chartSeries}
                 type="radialBar"
-                height={220}
+                height={250}
               />
             )}
           </div>
