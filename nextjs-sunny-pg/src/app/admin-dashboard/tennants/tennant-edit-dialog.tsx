@@ -13,6 +13,8 @@ import { parseISO } from "date-fns";
 import Loader from "react-js-loader";
 import useUserStore from "@/lib/store/userStore";
 import DateSelector from "@/app/components/DateSelector";
+import { compressImage } from "../../user-dashboard/helpers/compressImage";
+import { uploadPhoto } from "../../user-dashboard/helpers/helper";
 
 type UserDetails = {
   uid: string;
@@ -54,6 +56,12 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isModified, setIsModified] = useState(false);
   const { userId } = useUserStore();
+  const [loadingStates, setLoadingStates] = useState({
+    profile: false,
+    adhaarFront: false,
+    adhaarBack: false,
+    alternateId: false,
+  });
 
   useEffect(() => {
     if (uid && isOpen) {
@@ -211,6 +219,84 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
 
   const handleCancel = () => setDialogOpen(false);
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    idType: "profile" | "adhaarFront" | "adhaarBack" | "alternateId"
+  ) => {
+    const file = event.target.files ? event.target.files[0] : null;
+
+    // Set loading state to true for the selected ID type
+    setLoadingStates((prev) => ({ ...prev, [idType]: true }));
+
+    let pathName = "";
+    switch (idType) {
+      case "profile":
+        pathName = `photo-ids/${uid}/profilePhoto/`;
+        break;
+      case "adhaarFront":
+        pathName = `photo-ids/${uid}/adhaarFront/`;
+        break;
+      case "adhaarBack":
+        pathName = `photo-ids/${uid}/adhaarBack/`;
+        break;
+      default:
+        pathName = `photo-ids/${uid}/alternateId/`;
+        break;
+    }
+
+    if (file) {
+      const validTypes = ["image/jpeg", "image/png"];
+      if (!validTypes.includes(file.type)) {
+        alert("Only .jpg, .jpeg, or .png files are allowed.");
+        setLoadingStates((prev) => ({ ...prev, [idType]: false }));
+        return;
+      }
+      const compressedFile: any = await compressImage(file);
+      const updatedUrl = await uploadPhoto(uid, pathName, idType, compressedFile);
+
+      // Update the state with the new URL
+      setTenantData((prev: any) => ({
+        ...prev,
+        PhotoIds: { ...prev.PhotoIds, [`${idType}Url`]: updatedUrl },
+      }));
+
+      // Update the editedData state to reflect the new URL
+      setEditedData((prev: any) => ({
+        ...prev,
+        PhotoIds: { ...prev.PhotoIds, [`${idType}Url`]: updatedUrl },
+      }));
+
+      // Set loading state to false after fetching new URLs
+      setLoadingStates((prev) => ({ ...prev, [idType]: false }));
+    }
+  };
+
+  const renderFilePreview = (imageUrl: string | null, isLoading: boolean) => {
+    return (
+      <div className="mt-2 rounded bg-white relative">
+        {isLoading ? (
+          <div role="status" className="flex items-center justify-center h-auto">
+            <Loader
+              type="hourglass"
+              bgColor={"#7c3ab3"}
+              color={"#828282"}
+              title={"Loading..."}
+              size={60}
+            />
+          </div>
+        ) : (
+          <Image
+            src={imageUrl || User}
+            alt="uploaded preview"
+            className="w-full max-h-48 object-cover"
+            height={256}
+            width={256}
+          />
+        )}
+      </div>
+    );
+  };
+
   return (
     isOpen && (
       <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
@@ -362,48 +448,100 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                   <hr className="my-6" />
                   <div className="space-y-4 mt-4">
                     <div>
-                      <label>Profile Picture</label>
-                      <Image
-                        src={tenantData?.PhotoIds?.profileUrl || User}
-                        alt="Profile"
-                        width={256}
-                        height={256}
-                        className="rounded-lg shadow-lg"
-                        style={{ width: "100%", height: "auto" }}
+                      <div className="flex justify-between items-center">
+                        <label>Profile Picture</label>
+                        <button
+                          onClick={() =>
+                            document.getElementById("profileInput")?.click()
+                          }
+                          className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                        >
+                          Choose File
+                        </button>
+                      </div>
+                      <input
+                        id="profileInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, "profile")}
+                        className="hidden"
                       />
+                      {renderFilePreview(
+                        tenantData?.PhotoIds?.profileUrl,
+                        loadingStates.profile
+                      )}
                     </div>
                     <div>
-                      <label>Aadhaar Front</label>
-                      <Image
-                        src={tenantData?.PhotoIds?.adhaarFrontUrl || User}
-                        alt="Aadhaar Front"
-                        width={256}
-                        height={256}
-                        className="rounded-lg shadow-lg"
-                        style={{ width: "100%", height: "auto" }}
+                      <div className="flex justify-between items-center">
+                        <label>Aadhaar Front</label>
+                        <button
+                          onClick={() =>
+                            document.getElementById("adhaarFrontInput")?.click()
+                          }
+                          className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                        >
+                          Choose File
+                        </button>
+                      </div>
+                      <input
+                        id="adhaarFrontInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, "adhaarFront")}
+                        className="hidden"
                       />
+                      {renderFilePreview(
+                        tenantData?.PhotoIds?.adhaarFrontUrl,
+                        loadingStates.adhaarFront
+                      )}
                     </div>
                     <div>
-                      <label>Aadhaar Back</label>
-                      <Image
-                        src={tenantData?.PhotoIds?.adhaarBackUrl || User}
-                        alt="Aadhaar Back"
-                        width={256}
-                        height={256}
-                        className="rounded-lg shadow-lg"
-                        style={{ width: "100%", height: "auto" }}
+                      <div className="flex justify-between items-center">
+                        <label>Aadhaar Back</label>
+                        <button
+                          onClick={() =>
+                            document.getElementById("adhaarBackInput")?.click()
+                          }
+                          className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                        >
+                          Choose File
+                        </button>
+                      </div>
+                      <input
+                        id="adhaarBackInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, "adhaarBack")}
+                        className="hidden"
                       />
+                      {renderFilePreview(
+                        tenantData?.PhotoIds?.adhaarBackUrl,
+                        loadingStates.adhaarBack
+                      )}
                     </div>
                     <div>
-                      <label>Other ID</label>
-                      <Image
-                        src={tenantData?.PhotoIds?.otherIdUrl || User}
-                        alt="Other ID"
-                        width={256}
-                        height={256}
-                        className="rounded-lg shadow-lg"
-                        style={{ width: "100%", height: "auto" }}
+                      <div className="flex justify-between items-center">
+                        <label>Other ID</label>
+                        <button
+                          onClick={() =>
+                            document.getElementById("alternateIdInput")?.click()
+                          }
+                          className="bg-purple-800 hover:bg-purple-700 text-white px-3 py-1 rounded"
+                        >
+                          Choose File
+                        </button>
+                      </div>
+                      <input
+                        id="alternateIdInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, "alternateId")}
+                        className="hidden"
                       />
+                      {renderFilePreview(
+                        tenantData?.PhotoIds?.otherIdUrl,
+                        loadingStates.alternateId
+                      )}
                     </div>
                   </div>
                 </div>
@@ -420,11 +558,11 @@ const TenantEditDialog: React.FC<TenantEditDialogProps> = ({
                   onClick={handleSubmit}
                   disabled={
                     !isModified ||
-                    (editedData.status === "Active" && !editedData.start_date)
+                    (editedData?.status === "Active" && !editedData?.start_date)
                   } // Disable if not modified or if status is Active and start date is not set
                   className={`${
                     isModified &&
-                    (editedData.status !== "Active" || editedData.start_date)
+                    (editedData?.status !== "Active" || editedData?.start_date)
                       ? "bg-purple-500"
                       : "bg-gray-400"
                   } text-white rounded py-2 px-4 focus:outline-none`}
