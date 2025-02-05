@@ -144,12 +144,10 @@ const TennantCard: React.FC<TennantCardProps> = ({ user, refreshUsers }) => {
                     onClick={handlePaymentDialogClick}
                   />
                 )}
-                {user.status !== "Departed" && (
-                  <FaPen
-                    className="text-gray-600 text-3xl hover:text-gray-900 border-2 p-1"
-                    onClick={handleEditDialogClick}
-                  />
-                )}
+                <FaPen
+                  className="text-gray-600 text-3xl hover:text-gray-900 border-2 p-1"
+                  onClick={handleEditDialogClick}
+                />
               </div>
             </div>
             <div className="mt-2">
